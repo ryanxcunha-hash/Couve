@@ -91,7 +91,7 @@ document.addEventListener('click',function(e){var t=e.target,d=t.dataset||{};
   put({id:old.id||uid(),q:q,p:p,d:$('#fd').value||today(),n:$('#fn').value.trim(),ok:!!old.ok});closeSheet();return}
  if(t.id==='exp'||t.id==='cp'){var s=JSON.stringify(cargas);
   if(t.id==='cp'){if(navigator.clipboard)navigator.clipboard.writeText(s).then(function(){alert('Backup copiado!')},function(){prompt('Copie:',s)});else prompt('Copie:',s);return}
-  (window.claude?claude.use('downloads'):Promise.resolve(null)).then(function(dl){if(dl)dl.save({filename:'couve-backup.json',data:s}).catch(function(){});else prompt('Copie:',s)}).catch(function(){prompt('Copie:',s)})
+  var bl=new Blob([s],{type:'application/json'}),u=URL.createObjectURL(bl),l=document.createElement('a');l.href=u;l.download='couve-backup.json';document.body.appendChild(l);l.click();l.remove();setTimeout(function(){URL.revokeObjectURL(u)},1000)}
 });
 render();
 </script></body></html>
