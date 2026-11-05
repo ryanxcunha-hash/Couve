@@ -79,6 +79,61 @@ function mrange(o){var n=new Date(),a=new Date(n.getFullYear(),n.getMonth()+o,1)
 function setRp(k){rsel=k;var r;if(k==='m'){r=mrange(0);rf=r[0];rt=r[1]}else if(k==='pm'){r=mrange(-1);rf=r[0];rt=r[1]}else if(k==='30'){var e=new Date();e.setDate(e.getDate()-29);rf=iso(e);rt=today()}else if(k==='custom'&&(!rf||!rt)){r=mrange(0);rf=r[0];rt=r[1]}}
 setRp('m');
 function repList(){return cargas.filter(function(c){var okd=c.d>=rf&&c.d<=rt;return okd&&(rb==='all'||c.b===rb)}).sort(function(a,b){return b.d.localeCompare(a.d)||b.id.localeCompare(a.id)})}
+function pdfBuild(groups,meta){
+ var W=595,H=842,M=40,pages=[],ops,y;
+ function pe(t){t=String(t).replace(/\u00a0/g,' ');var o='';for(var i=0;i<t.length;i++){var c=t.charCodeAt(i);if(c===40||c===41||c===92)o+='\\'+t[i];else if(c<32)o+=' ';else if(c<127)o+=t[i];else if(c<256)o+='\\'+('00'+c.toString(8)).slice(-3);else o+='?'}return o}
+ function tw(t,sz){t=String(t).replace(/\u00a0/g,' ');var w=0;for(var i=0;i<t.length;i++){var ch=t[i];w+=/[0-9]/.test(ch)?556:(ch===','||ch==='.'||ch===' '||ch===':')?278:ch==='R'?722:ch==='-'?333:556}return w*sz/1000}
+ function np(){ops=[];pages.push(ops);y=M+12}
+ function T(x,t,sz,b,al){var X=al==='r'?x-tw(t,sz):x;ops.push('BT /'+(b?'F2':'F1')+' '+sz+' Tf 0 g '+X.toFixed(1)+' '+(H-y).toFixed(1)+' Td ('+pe(t)+') Tj ET')}
+ function L(yy){ops.push('0.8 G 0.5 w '+M+' '+(H-yy)+' m '+(W-M)+' '+(H-yy)+' l S')}
+ function th(){ops.push('0.93 g '+M+' '+(H-y-6)+' '+(W-2*M)+' 20 re f');T(M+6,'Data',9,1);T(230,'Quantidade',9,1,'r');T(320,'Preço un.',9,1,'r');T(430,'Valor',9,1,'r');T(450,'Situação',9,1);y+=22}
+ np();T(M,'Relatório de cargas',18,1);y+=20;T(M,'Colheita de couve',10,0);y+=16;
+ T(M,'Período: '+fdate(meta.rf)+' a '+fdate(meta.rt),10,0);y+=14;T(M,'Comprador: '+meta.buyer,10,0);y+=14;
+ if(meta.pend){T(M,'Somente cargas a receber',10,0);y+=14}
+ T(M,'Emitido em '+fdate(today()),10,0);y+=26;
+ var sum=[],gq=0,gv=0,gr=0;
+ groups.forEach(function(g){
+  if(y>H-120){np()}
+  T(M,g.name,13,1);y+=18;th();
+  var q=0,v=0,r=0;
+  g.list.forEach(function(c){if(y>H-70){np();T(M,g.name+' (continuação)',10,1);y+=18;th()}
+   var val=c.q*c.p;q+=c.q;v+=val;if(!c.ok)r+=val;
+   T(M+6,fdate(c.d),10,0);T(230,num(c.q)+' un.',10,0,'r');T(320,brl(c.p),10,0,'r');T(430,brl(val),10,0,'r');T(450,c.ok?'Recebido':'A receber',10,0);L(y+6);y+=20});
+  if(y>H-60)np();
+  T(M+6,'Total',10,1);T(230,num(q)+' un.',10,1,'r');T(430,brl(v),10,1,'r');y+=18;
+  if(!meta.pend){T(M+6,'A receber: '+brl(r),10,1);y+=16}
+  y+=14;sum.push({n:g.name,q:q,v:v,r:r});gq+=q;gv+=v;gr+=r});
+ if(sum.length>1){if(y>H-140)np();T(M,'Resumo geral',13,1);y+=18;
+  ops.push('0.93 g '+M+' '+(H-y-6)+' '+(W-2*M)+' 20 re f');T(M+6,'Comprador',9,1);T(280,'Quantidade',9,1,'r');T(390,'Valor',9,1,'r');T(W-M-6,'A receber',9,1,'r');y+=22;
+  sum.forEach(function(x){if(y>H-70)np();T(M+6,x.n,10,0);T(280,num(x.q)+' un.',10,0,'r');T(390,brl(x.v),10,0,'r');T(W-M-6,brl(x.r),10,0,'r');L(y+6);y+=20});
+  T(M+6,'Total geral',10,1);T(280,num(gq)+' un.',10,1,'r');T(390,brl(gv),10,1,'r');T(W-M-6,brl(gr),10,1,'r');y+=18}
+ pages.forEach(function(o,i){o.push('BT /F1 8 Tf 0.4 g '+(W/2-30)+' 24 Td ('+pe('Página '+(i+1)+' de '+pages.length)+') Tj ET')});
+ var objs=[],kids=[];
+ objs[1]='<< /Type /Catalog /Pages 2 0 R >>';
+ pages.forEach(function(o,i){kids.push((5+i*2)+' 0 R')});
+ objs[2]='<< /Type /Pages /Kids ['+kids.join(' ')+'] /Count '+pages.length+' >>';
+ objs[3]='<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>';
+ objs[4]='<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>';
+ pages.forEach(function(o,i){var cs=o.join('\n');objs[5+i*2]='<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents '+(6+i*2)+' 0 R >>';objs[6+i*2]='<< /Length '+cs.length+' >>\nstream\n'+cs+'\nendstream'});
+ var out='%PDF-1.4\n',off=[],k;
+ for(k=1;k<objs.length;k++){off[k]=out.length;out+=k+' 0 obj\n'+objs[k]+'\nendobj\n'}
+ var xr=out.length;out+='xref\n0 '+objs.length+'\n0000000000 65535 f \n';
+ for(k=1;k<objs.length;k++)out+=('0000000000'+off[k]).slice(-10)+' 00000 n \n';
+ out+='trailer\n<< /Size '+objs.length+' /Root 1 0 R >>\nstartxref\n'+xr+'\n%%EOF';
+ var u8=new Uint8Array(out.length);for(k=0;k<out.length;k++)u8[k]=out.charCodeAt(k)&255;return u8}
+function makePdf(){
+ var l=repList().filter(function(c){return rpend?!c.ok:true});
+ if(!l.length){alert('Nenhuma carga neste período.');return}
+ l.sort(function(a,b){return a.d.localeCompare(b.d)||a.id.localeCompare(b.id)});
+ var by={};l.forEach(function(c){var k=c.b||'Sem comprador';(by[k]=by[k]||[]).push(c)});
+ var groups=Object.keys(by).sort().map(function(k){return{name:k,list:by[k]}});
+ var u8=pdfBuild(groups,{rf:rf,rt:rt,buyer:rb==='all'?'Todos':rb,pend:rpend});
+ var slug=String(rb==='all'?'todos':rb).normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-zA-Z0-9]+/g,'-').replace(/^-|-$/g,'');
+ var name='relatorio-'+slug+'-'+rf+'-a-'+rt+'.pdf';
+ try{var blob=new Blob([u8],{type:'application/pdf'}),file=new File([blob],name,{type:'application/pdf'});
+  if(navigator.canShare&&navigator.canShare({files:[file]})){navigator.share({files:[file],title:name}).catch(function(){});return}
+  var u=URL.createObjectURL(blob),a=document.createElement('a');a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(u)},4000)}
+ catch(e){alert('Não foi possível gerar o PDF neste aparelho.')}}
 function repHTML(){
  var l=repList(),t=tot(l),pend=tot(l.filter(function(c){return !c.ok})),shown=rpend?l.filter(function(c){return !c.ok}):l,h='<h1>Relatório</h1><div style="color:var(--mut);margin-bottom:12px">Veja as vendas de um período.</div>';
  h+='<div class="chips" style="margin-bottom:10px">'+[['m','Este mês'],['pm','Mês passado'],['30','Últimos 30 dias'],['custom','Escolher datas']].map(function(x){return '<button class="chip'+(rsel===x[0]?' sel':'')+'" data-rp="'+x[0]+'">'+x[1]+'</button>'}).join('')+'</div>';
@@ -86,6 +141,7 @@ function repHTML(){
 
  else h+='<div class="pill" style="margin-bottom:10px">'+fdate(rf)+' até '+fdate(rt)+'</div>';
  h+='<div class="chips" style="margin-bottom:10px"><button class="chip'+(rb==='all'?' sel':'')+'" data-rbf="all">Todos</button>'+clis.map(function(n){return '<button class="chip'+(rb===n?' sel':'')+'" data-rbf="'+esc(n)+'">'+esc(n)+'</button>'}).join('')+'<button class="chip'+(rpend?' sel':'')+'" data-rpt="1">Só a receber</button></div>';
+ h+='<button class="btn" data-pdf="1" style="margin-bottom:12px">📄 Gerar PDF</button>';
  h+='<div class="card hero"><small>Sua parte (metade)</small><div class="big">'+brl(t.v/2)+'</div><div class="row sp"><div><small>Valor total</small><div><b>'+brl(t.v)+'</b></div></div><div style="text-align:right"><small>Vendido</small><div><b>'+num(t.q)+' un.</b></div></div></div></div>';
  h+='<div class="card"><small class="pill">Falta receber</small><div><b>'+brl(pend.v)+'</b> <span class="pill">· metade '+brl(pend.v/2)+'</span></div></div>';
  var by={};l.forEach(function(c){var k=c.b||'Sem comprador';by[k]=by[k]||{q:0,v:0,r:0};by[k].q+=c.q;by[k].v+=c.q*c.p;if(!c.ok)by[k].r+=c.q*c.p});
@@ -131,6 +187,7 @@ document.addEventListener('click',function(e){var t=e.target,d=t.dataset||{};
  if(d.qa!==undefined){var qv=parseFloat(d.qa),cur=pnum($('#fq').value)||0,nv=qv===0?0:cur+qv;$('#fq').value=nv>0?String(Math.round(nv*100)/100).replace('.',','):'';upd();return}
  if(d.aq){var qn=pnum($('#cfgq').value);if(qn>0&&qs.indexOf(qn)<0){qs.push(qn);qs.sort(function(a,b){return a-b});saveQs()}return render()}
  if(d.rq!==undefined){qs=qs.filter(function(x){return String(x)!==d.rq});saveQs();return render()}
+ if(d.pdf){makePdf();return}
  if(d.rp){setRp(d.rp);return render()}
  if(d.rbf!==undefined){rb=d.rbf;return render()}
  if(d.rpt){rpend=!rpend;return render()}
