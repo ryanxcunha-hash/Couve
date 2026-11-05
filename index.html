@@ -68,17 +68,17 @@ function inPer(c,p){var t=today();if(p==='t')return true;return p==='d'?c.d===t:
 function tot(l){var q=0,v=0;l.forEach(function(c){q+=c.q;v+=c.q*c.p});return{q:q,v:v}}
 function fdate(d){return d.split('-').reverse().join('/')}
 function item(c){var v=c.q*c.p;return '<div class="item"><div class="main" data-edit="'+c.id+'">'+num(c.q)+' un. × '+brl(c.p)+' = <b>'+brl(v)+'</b><small>'+fdate(c.d)+(c.b?' · '+esc(c.b):'')+(c.n?' · '+esc(c.n):'')+'</small></div><div class="row"><button class="tag'+(c.ok?' ok':'')+'" data-ok="'+c.id+'">'+(c.ok?'✓ Recebido':'A receber')+'</button><button class="x" data-del="'+c.id+'">✕</button></div></div>'}
-var rsel='m',rf='',rt='',rdays=[],rb='all',rpend=false;
+var rsel='m',rf='',rt='',rb='all',rpend=false;
 function iso(d){return new Date(d-d.getTimezoneOffset()*6e4).toISOString().slice(0,10)}
 function mrange(o){var n=new Date(),a=new Date(n.getFullYear(),n.getMonth()+o,1),b=new Date(n.getFullYear(),n.getMonth()+o+1,0);return[iso(a),iso(b)]}
 function setRp(k){rsel=k;var r;if(k==='m'){r=mrange(0);rf=r[0];rt=r[1]}else if(k==='pm'){r=mrange(-1);rf=r[0];rt=r[1]}else if(k==='30'){var e=new Date();e.setDate(e.getDate()-29);rf=iso(e);rt=today()}else if(k==='custom'&&(!rf||!rt)){r=mrange(0);rf=r[0];rt=r[1]}}
 setRp('m');
-function repList(){return cargas.filter(function(c){var okd=rsel==='days'?rdays.indexOf(c.d)>=0:(c.d>=rf&&c.d<=rt);return okd&&(rb==='all'||c.b===rb)}).sort(function(a,b){return b.d.localeCompare(a.d)||b.id.localeCompare(a.id)})}
+function repList(){return cargas.filter(function(c){var okd=c.d>=rf&&c.d<=rt;return okd&&(rb==='all'||c.b===rb)}).sort(function(a,b){return b.d.localeCompare(a.d)||b.id.localeCompare(a.id)})}
 function repHTML(){
  var l=repList(),t=tot(l),pend=tot(l.filter(function(c){return !c.ok})),shown=rpend?l.filter(function(c){return !c.ok}):l,h='<h1>Relatório</h1><div style="color:var(--mut);margin-bottom:12px">Veja as vendas de um período.</div>';
- h+='<div class="chips" style="margin-bottom:10px">'+[['m','Este mês'],['pm','Mês passado'],['30','Últimos 30 dias'],['custom','Escolher datas'],['days','Dias específicos']].map(function(x){return '<button class="chip'+(rsel===x[0]?' sel':'')+'" data-rp="'+x[0]+'">'+x[1]+'</button>'}).join('')+'</div>';
+ h+='<div class="chips" style="margin-bottom:10px">'+[['m','Este mês'],['pm','Mês passado'],['30','Últimos 30 dias'],['custom','Escolher datas']].map(function(x){return '<button class="chip'+(rsel===x[0]?' sel':'')+'" data-rp="'+x[0]+'">'+x[1]+'</button>'}).join('')+'</div>';
  if(rsel==='custom')h+='<div class="card"><div class="row"><div style="flex:1"><label>De</label><input id="rfi" type="date" value="'+rf+'"></div><div style="flex:1"><label>Até</label><input id="rti" type="date" value="'+rt+'"></div></div></div>';
- else if(rsel==='days')h+='<div class="card"><label>Escolha um dia e toque em Adicionar</label><div class="row"><input id="rdi" type="date" value="'+today()+'" style="margin:4px 0"><button class="btn" style="width:auto;padding:12px 16px" data-rad="1">Adicionar</button></div><div class="chips" style="flex-wrap:wrap;margin-top:8px">'+(rdays.map(function(x){return '<button class="chip sel" data-rdd="'+x+'">'+fdate(x)+' ✕</button>'}).join('')||'<small style="color:var(--mut)">Nenhum dia escolhido.</small>')+'</div></div>';
+
  else h+='<div class="pill" style="margin-bottom:10px">'+fdate(rf)+' até '+fdate(rt)+'</div>';
  h+='<div class="chips" style="margin-bottom:10px"><button class="chip'+(rb==='all'?' sel':'')+'" data-rbf="all">Todos</button>'+clis.map(function(n){return '<button class="chip'+(rb===n?' sel':'')+'" data-rbf="'+esc(n)+'">'+esc(n)+'</button>'}).join('')+'<button class="chip'+(rpend?' sel':'')+'" data-rpt="1">Só a receber</button></div>';
  h+='<div class="card hero"><small>Sua parte (metade)</small><div class="big">'+brl(t.v/2)+'</div><div class="row sp"><div><small>Valor total</small><div><b>'+brl(t.v)+'</b></div></div><div style="text-align:right"><small>Vendido</small><div><b>'+num(t.q)+' un.</b></div></div></div></div>';
@@ -97,7 +97,7 @@ function render(){var h='';
   h+='<h1>Olá '+NAME+' 👋</h1><div style="color:var(--mut)">'+g+'! Veja a couve colhida.</div><div class="seg" style="margin-top:12px"><button data-p="t" class="'+(per==='t'?'on':'')+'">Total</button><button data-p="d" class="'+(per==='d'?'on':'')+'">Dia</button><button data-p="w" class="'+(per==='w'?'on':'')+'">Semana</button><button data-p="m" class="'+(per==='m'?'on':'')+'">Mês</button></div>'+
   '<div class="card hero"><small>Sua parte (metade) — '+pl+'</small><div class="huge">'+brl(t.v/2)+'</div><div class="hr"></div><div class="row sp"><div><small>Valor total</small><div class="mid">'+brl(t.v)+'</div></div><div style="text-align:right"><small>Colhido '+pl+'</small><div class="mid">'+num(t.q)+' un.</div></div></div></div>'+
   '<div class="card row sp"><div><small class="pill">Ainda a receber (geral)</small><div><b>'+brl(pend.v)+'</b> <span class="pill">· metade '+brl(pend.v/2)+'</span></div></div></div>'+
-  bh+'<h2>Últimas cargas</h2><div class="card">'+(cargas.slice().sort(function(a,b){return b.d.localeCompare(a.d)||b.id.localeCompare(a.id)}).slice(0,5).map(item).join('')||'<small style="color:var(--mut)">Nenhuma carga ainda. Toque no +</small>')+'</div>'}
+  bh}
  else if(view==='list'){var l2=cargas.filter(function(c){return (flt==='all'||(flt==='p'?!c.ok:c.ok))&&(fb==='all'||c.b===fb)}).sort(function(a,b){return b.d.localeCompare(a.d)||b.id.localeCompare(a.id)}),ls=tot(l2);
   h+='<div class="seg"><button data-f="all" class="'+(flt==='all'?'on':'')+'">Todas</button><button data-f="p" class="'+(flt==='p'?'on':'')+'\">A receber</button><button data-f="o" class="'+(flt==='o'?'on':'')+'">Recebidos</button></div><div class="chips" style="margin-bottom:10px"><button class="chip'+(fb==='all'?' sel':'')+'" data-fb="all">Todos</button>'+clis.map(function(n){return '<button class="chip'+(fb===n?' sel':'')+'" data-fb="'+esc(n)+'">'+esc(n)+'</button>'}).join('')+'</div><div class="card"><small class="pill">'+l2.length+' cargas · '+num(ls.q)+' un.</small><div class="mid">'+brl(ls.v)+'</div></div><div class="card">'+(l2.map(item).join('')||'<small style="color:var(--mut)">Nada por aqui.</small>')+'</div>'}
  else if(view==='rep'){h+=repHTML()}
@@ -126,8 +126,6 @@ document.addEventListener('click',function(e){var t=e.target,d=t.dataset||{};
  if(d.rp){setRp(d.rp);return render()}
  if(d.rbf!==undefined){rb=d.rbf;return render()}
  if(d.rpt){rpend=!rpend;return render()}
- if(d.rad){var dv=$('#rdi').value;if(dv&&rdays.indexOf(dv)<0){rdays.push(dv);rdays.sort()}return render()}
- if(d.rdd){rdays=rdays.filter(function(x){return x!==d.rdd});return render()}
  if(d.p){per=d.p;return render()}if(d.f){flt=d.f;return render()}
  var ed=t.closest('[data-edit]');if(ed&&!d.ok&&!d.del)return openForm(ed.dataset.edit);
  if(d.ok){var c=cargas.filter(function(x){return x.id===d.ok})[0];if(c){c=Object.assign({},c,{ok:!c.ok});put(c)}return}
