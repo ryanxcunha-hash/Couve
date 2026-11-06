@@ -2,7 +2,7 @@
 <html lang="pt-BR"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Couve"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><link rel="manifest" href="manifest.json"><link rel="apple-touch-icon" href="icon-v3.png"><link rel="icon" href="icon-v3.png">
-<meta name="app-version" content="2026-11-06a"><meta name="theme-color" content="#15803d"><title>Couve</title>
+<meta name="app-version" content="2026-11-06b"><meta name="theme-color" content="#15803d"><title>Couve</title>
 <style>
 :root{--bg:#f3f8f4;--card:#fff;--tx:#10241a;--mut:#64748b;--pri:#15803d;--ok:#16a34a;--warn:#d97706;--bd:#e2e8f0;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 @media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0b140f;--card:#13221a;--tx:#e8f3ec;--mut:#94a3b8;--pri:#4ade80;--bd:#21352a;color-scheme:dark}}
@@ -120,13 +120,13 @@ function restoreData(txt){var o;try{o=JSON.parse(txt)}catch(e){return{ok:0,msg:'
  if(o.bp&&typeof o.bp==='object')Object.keys(o.bp).forEach(function(k){if(bp[k]==null&&o.bp[k]!=null)bp[k]=String(o.bp[k])});
  if(!lastPrice&&o.lastPrice){lastPrice=String(o.lastPrice);try{localStorage.setItem(LK+'-p',lastPrice)}catch(e){}}
  (Array.isArray(o.grec)?o.grec:[]).forEach(function(r){var v=r?+r.v:NaN;if(!r||typeof r.id!=='string'||!(v>0)||(r.freq!=='w'&&r.freq!=='m')||!okDate(r.last)){bad++;return}if(!grec.some(function(x){return x.id===r.id}))grec.push({id:r.id,v:v,c:String(r.c||''),n:String(r.n||''),freq:r.freq,day:Math.max(0,Math.min(31,+r.day||0)),last:r.last})});
- if(o.pix&&typeof o.pix==='object'&&!pix.key&&o.pix.key){pix={key:String(o.pix.key),name:String(o.pix.name||'')};savePix()}
+ if(o.pix&&typeof o.pix==='object'&&!pix.key&&o.pix.key){pix={key:String(o.pix.key),name:String(o.pix.name||''),city:String(o.pix.city||''),val:o.pix.val!==false};savePix()}
  persistC(null);saveG();saveGr();saveCli();saveQs();saveGc();saveBp();
  return{ok:1,msg:'Pronto! '+nc+(nc===1?' carga nova':' cargas novas')+' e '+ng+(ng===1?' gasto novo':' gastos novos')+' adicionados.'+(bad?' '+bad+' itens incompletos foram ignorados.':'')}}
 function openRestore(){$('#shc').innerHTML='<div class="row sp"><h1>Restaurar backup</h1><button class="xc" data-close="1" aria-label="Fechar">✕</button></div><div style="color:var(--mut);font-size:14px;margin:6px 0 12px">Escolha o arquivo do backup ou cole o texto copiado. Os dados do backup são somados aos atuais e nada é apagado.</div><label>Arquivo de backup</label><input id="rfile" type="file" accept=".json,application/json,text/plain"><label>Ou cole o backup aqui</label><textarea id="rtxt" rows="4" style="width:100%;box-sizing:border-box;padding:13px;border-radius:12px;border:1px solid var(--bd);background:var(--bg);color:var(--tx);font-size:16px;margin:4px 0 10px"></textarea><div id="rmsg" class="pill" style="margin-bottom:10px"></div><button class="btn" id="rgo">Restaurar</button><div style="height:8px"></div><button class="btn ghost" id="fcx">Fechar</button>';$('#sh').classList.add('open')}
-var grec=[],pix={key:'',name:''},gfreq='';
+var grec=[],pix={key:'',name:'',city:'',val:true},gfreq='';
 try{var grj=localStorage.getItem(LK+'-gr');if(grj){var gr0=JSON.parse(grj);if(Array.isArray(gr0))grec=gr0}}catch(e){}
-try{var pxj=localStorage.getItem(LK+'-pix');if(pxj){var px0=JSON.parse(pxj);if(px0&&typeof px0==='object')pix={key:String(px0.key||''),name:String(px0.name||'')}}}catch(e){}
+try{var pxj=localStorage.getItem(LK+'-pix');if(pxj){var px0=JSON.parse(pxj);if(px0&&typeof px0==='object')pix={key:String(px0.key||''),name:String(px0.name||''),city:String(px0.city||''),val:px0.val!==false}}}catch(e){}
 function saveGr(){try{localStorage.setItem(LK+'-gr',JSON.stringify(grec))}catch(e){}}
 function savePix(){try{localStorage.setItem(LK+'-pix',JSON.stringify(pix))}catch(e){}}
 function nextDay(d,n){var x=new Date(d+'T12:00:00');x.setDate(x.getDate()+(n||1));return iso(x)}
@@ -142,7 +142,7 @@ function applyRec(){var t=today(),ch=false;grec.forEach(function(r){var d=r.last
   if(hit){gastos.push({id:uid(),d:d,v:r.v,c:r.c,n:r.n,rid:r.id});ch=true}}
   if(r.last!==d){r.last=d;ch=true}});if(ch){saveG();saveGr()}}
 function gfreqHTML(){return [['','Não repetir'],['w','Toda semana'],['m','Todo mês']].map(function(x){return '<button class="chip'+(gfreq===x[0]?' sel':'')+'" data-gf="'+x[0]+'">'+x[1]+'</button>'}).join('')}
-function pixCard(){return '<div class="card"><b>Dados para pagamento (Pix)</b><div style="color:var(--mut);font-size:13px;margin:4px 0 10px">Aparecem no final do PDF do comprador quando houver valor a receber.</div><label>Chave Pix</label><input id="pxk" value="'+esc(pix.key)+'" placeholder="CPF, telefone, e-mail ou chave aleatória"><label>Nome do favorecido</label><input id="pxn" value="'+esc(pix.name)+'" placeholder="Seu nome"><button class="btn" data-pxs="1">Salvar</button><div id="pxm" class="pill" style="margin-top:8px"></div></div>'}
+function pixCard(){return '<div class="card"><b>Dados para pagamento (Pix)</b><div style="color:var(--mut);font-size:13px;margin:4px 0 10px">Aparecem no final do PDF do comprador, com o QR Code, quando houver valor a receber. Telefone: use +55 e o DDD (ex.: +5511999999999). CPF e CNPJ: só números.</div><label>Chave Pix</label><input id="pxk" value="'+esc(pix.key)+'" placeholder="CPF, telefone, e-mail ou chave aleatória"><label>Nome do favorecido</label><input id="pxn" value="'+esc(pix.name)+'" placeholder="Seu nome"><label>Cidade (opcional)</label><input id="pxc" value="'+esc(pix.city||'')+'" placeholder="Sua cidade"><label class="row" style="margin:2px 0 12px;font-size:14px;color:var(--tx)"><input type="checkbox" id="pxv" style="width:auto;margin:0"'+(pix.val!==false?' checked':'')+'> Já preencher o valor em aberto no QR Code</label><button class="btn" data-pxs="1">Salvar</button><div id="pxm" class="pill" style="margin-top:8px"></div></div>'}
 function daysHTML(l){if(!l.length)return '<div class="card"><small style="color:var(--mut)">Nada por aqui.</small></div>';var days=[],by={};l.forEach(function(c){if(!by[c.d]){by[c.d]=[];days.push(c.d)}by[c.d].push(c)});
  return days.map(function(d){var t=tot(by[d]),w=wd(d);return '<div class="dayh"><b>'+w.charAt(0).toUpperCase()+w.slice(1)+', '+fdate(d)+'</b><span>'+num(t.q)+' un. · '+brl(t.v)+'</span></div><div class="card">'+by[d].map(item).join('')+'</div>'}).join('')}
 function chartHTML(){
@@ -161,6 +161,55 @@ function chartHTML(){
  svg+='</svg>';
  var diff=prev>0?Math.round((cur-prev)/prev*100):null,cmp=prev>0?'<b style="color:'+(diff>=0?'var(--ok,#16a34a)':'var(--warn,#d97706)')+'">'+(diff>=0?'▲ +':'▼ ')+diff+'%</b> sobre o período anterior ('+brl(prev)+')':'<span class="pill">Sem vendas no período anterior ('+fdate(ps)+' a '+fdate(pe)+') para comparar.</span>';
  return '<h2>Vendas '+(mode==='d'?'por dia':mode==='w'?'por semana':'por mês')+'</h2><div class="card">'+svg+'<div style="margin-top:8px;font-size:14px">'+cmp+'</div></div>'}
+var QR_EC=[-1,10,16,26,18,24,16,18,22,22,26,30,22,22,24,24,28,28,26,26,26,26,28,28,28,28,28,28,28,28,28,28,28,28,28,28,28,28,28,28,28];
+var QR_NB=[-1,1,1,1,2,2,4,4,4,5,5,5,8,9,9,10,10,11,13,14,16,17,17,18,20,21,23,25,26,28,29,31,33,35,37,38,40,43,45,47,49];
+function qrRaw(v){var r=(16*v+128)*v+64;if(v>=2){var a=Math.floor(v/7)+2;r-=(25*a-10)*a-55;if(v>=7)r-=36}return r}
+function qrMul(x,y){var z=0;for(var i=7;i>=0;i--){z=(z<<1)^((z>>>7)*0x11D);z^=((y>>>i)&1)*x}return z}
+function qrGen(d){var r=[],i,j;for(i=0;i<d;i++)r.push(0);r[d-1]=1;var root=1;for(i=0;i<d;i++){for(j=0;j<d;j++){r[j]=qrMul(r[j],root);if(j+1<d)r[j]^=r[j+1]}root=qrMul(root,2)}return r}
+function qrRem(data,gen){var res=gen.map(function(){return 0});data.forEach(function(b){var f=b^res.shift();res.push(0);gen.forEach(function(c,i){res[i]^=qrMul(c,f)})});return res}
+function qrCnt(t){var n=0;['10111010000','00001011101'].forEach(function(p){var i=-1;while((i=t.indexOf(p,i+1))>=0)n++});return n}
+function qrMake(text){
+ var bytes=[],u=unescape(encodeURIComponent(text)),i,j,k,ver,cap;for(i=0;i<u.length;i++)bytes.push(u.charCodeAt(i));
+ for(ver=1;ver<=40;ver++){cap=(Math.floor(qrRaw(ver)/8)-QR_EC[ver]*QR_NB[ver])*8;if(4+(ver<=9?8:16)+8*bytes.length<=cap)break}
+ if(ver>40)return null;
+ var bits=[];function put(v,n){for(var q=n-1;q>=0;q--)bits.push((v>>>q)&1)}
+ put(4,4);put(bytes.length,ver<=9?8:16);bytes.forEach(function(b){put(b,8)});put(0,Math.min(4,cap-bits.length));while(bits.length%8)bits.push(0);
+ var data=[];for(i=0;i<bits.length;i+=8){var bb=0;for(k=0;k<8;k++)bb=(bb<<1)|bits[i+k];data.push(bb)}
+ for(var pad=0xEC;data.length<cap/8;pad^=0xEC^0x11)data.push(pad);
+ var nb=QR_NB[ver],el=QR_EC[ver],raw=Math.floor(qrRaw(ver)/8),ns=nb-raw%nb,sl=Math.floor(raw/nb),blocks=[],gen=qrGen(el);
+ for(i=0,k=0;i<nb;i++){var dl=sl-el+(i<ns?0:1),dat=data.slice(k,k+dl);k+=dl;var ecc=qrRem(dat,gen);if(i<ns)dat.push(0);blocks.push(dat.concat(ecc))}
+ var cw=[];for(i=0;i<blocks[0].length;i++)blocks.forEach(function(b,jj){if(i!==sl-el||jj>=ns)cw.push(b[i])});
+ var size=ver*4+17,mod=[],fn=[];for(i=0;i<size;i++){mod.push(new Array(size).fill(false));fn.push(new Array(size).fill(false))}
+ function sf(x,y,d){mod[y][x]=d;fn[y][x]=true}
+ function gb(x,q){return((x>>>q)&1)!==0}
+ for(i=0;i<size;i++){sf(6,i,i%2===0);sf(i,6,i%2===0)}
+ function finder(x,y){for(var dy=-4;dy<=4;dy++)for(var dx=-4;dx<=4;dx++){var dist=Math.max(Math.abs(dx),Math.abs(dy)),xx=x+dx,yy=y+dy;if(xx>=0&&xx<size&&yy>=0&&yy<size)sf(xx,yy,dist!==2&&dist!==4)}}
+ finder(3,3);finder(size-4,3);finder(3,size-4);
+ var na=ver===1?0:Math.floor(ver/7)+2,ap=[];if(na){var step=ver===32?26:Math.ceil((ver*4+4)/(na*2-2))*2;ap=[6];for(var pos=size-7;ap.length<na;pos-=step)ap.splice(1,0,pos)}
+ for(i=0;i<na;i++)for(j=0;j<na;j++){if((i===0&&j===0)||(i===0&&j===na-1)||(i===na-1&&j===0))continue;for(var ay=-2;ay<=2;ay++)for(var ax=-2;ax<=2;ax++)sf(ap[i]+ax,ap[j]+ay,Math.max(Math.abs(ax),Math.abs(ay))!==1)}
+ function fmt(mask){var d=mask,r=d;for(var q=0;q<10;q++)r=(r<<1)^((r>>>9)*0x537);var bt=((d<<10)|r)^0x5412,q2;
+  for(q2=0;q2<=5;q2++)sf(8,q2,gb(bt,q2));sf(8,7,gb(bt,6));sf(8,8,gb(bt,7));sf(7,8,gb(bt,8));for(q2=9;q2<15;q2++)sf(14-q2,8,gb(bt,q2));
+  for(q2=0;q2<8;q2++)sf(size-1-q2,8,gb(bt,q2));for(q2=8;q2<15;q2++)sf(8,size-15+q2,gb(bt,q2));sf(8,size-8,true)}
+ fmt(0);
+ if(ver>=7){var vr=ver;for(i=0;i<12;i++)vr=(vr<<1)^((vr>>>11)*0x1F25);var vb=(ver<<12)|vr;for(i=0;i<18;i++){var cl=gb(vb,i),a=size-11+i%3,b=Math.floor(i/3);sf(a,b,cl);sf(b,a,cl)}}
+ var ci=0;for(var right=size-1;right>=1;right-=2){if(right===6)right=5;for(var vert=0;vert<size;vert++)for(j=0;j<2;j++){var x=right-j,up=((right+1)&2)===0,y=up?size-1-vert:vert;if(!fn[y][x]&&ci<cw.length*8){mod[y][x]=gb(cw[ci>>>3],7-(ci&7));ci++}}}
+ function mask(m){for(var y=0;y<size;y++)for(var x=0;x<size;x++){var inv;switch(m){case 0:inv=(x+y)%2===0;break;case 1:inv=y%2===0;break;case 2:inv=x%3===0;break;case 3:inv=(x+y)%3===0;break;case 4:inv=(Math.floor(x/3)+Math.floor(y/2))%2===0;break;case 5:inv=x*y%2+x*y%3===0;break;case 6:inv=(x*y%2+x*y%3)%2===0;break;default:inv=((x+y)%2+x*y%3)%2===0}if(!fn[y][x]&&inv)mod[y][x]=!mod[y][x]}}
+ function pen(){var r=0,dark=0,x,y,run,t;
+  for(y=0;y<size;y++){run=1;t='';for(x=0;x<size;x++){t+=mod[y][x]?'1':'0';if(mod[y][x])dark++;if(x>0&&mod[y][x]===mod[y][x-1]){run++;if(run===5)r+=3;else if(run>5)r++}else run=1}r+=qrCnt(t)*40}
+  for(x=0;x<size;x++){run=1;t='';for(y=0;y<size;y++){t+=mod[y][x]?'1':'0';if(y>0&&mod[y][x]===mod[y-1][x]){run++;if(run===5)r+=3;else if(run>5)r++}else run=1}r+=qrCnt(t)*40}
+  for(y=0;y<size-1;y++)for(x=0;x<size-1;x++){var c=mod[y][x];if(c===mod[y][x+1]&&c===mod[y+1][x]&&c===mod[y+1][x+1])r+=3}
+  var tot=size*size;r+=(Math.ceil(Math.abs(dark*20-tot*10)/tot)-1)*10;return r}
+ var best=0,bp=1e9;for(i=0;i<8;i++){mask(i);fmt(i);var pp=pen();if(pp<bp){bp=pp;best=i}mask(i)}
+ mask(best);fmt(best);return mod}
+function tlv(id,v){v=String(v);return id+('0'+v.length).slice(-2)+v}
+function crc16(t){var c=0xFFFF;for(var i=0;i<t.length;i++){c^=t.charCodeAt(i)<<8;for(var k=0;k<8;k++)c=(c&0x8000)?((c<<1)^0x1021):(c<<1);c&=0xFFFF}return('000'+c.toString(16).toUpperCase()).slice(-4)}
+function pixClean(t,mx){return String(t||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^A-Za-z0-9 ]/g,'').trim().toUpperCase().slice(0,mx)}
+function pixKey(k){k=String(k||'').trim();if(!k)return '';if(k.indexOf('@')>=0)return k;if(k[0]==='+')return '+'+k.replace(/\D/g,'');
+ if(/^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(k))return k.toLowerCase();
+ if(/[()\s]/.test(k)){var d=k.replace(/\D/g,'');return '+'+(d.length<=11?'55'+d:d)}return k.replace(/[.\-\/]/g,'')}
+function pixPayload(key,name,city,val){var k=pixKey(key);if(!k)return '';
+ var p=tlv('00','01')+tlv('26',tlv('00','br.gov.bcb.pix')+tlv('01',k))+tlv('52','0000')+tlv('53','986')+(val>0?tlv('54',(Math.round(val*100)/100).toFixed(2)):'')+tlv('58','BR')+tlv('59',pixClean(name,25)||'RECEBEDOR')+tlv('60',pixClean(city,15)||'BRASIL')+tlv('62',tlv('05','***'))+'6304';
+ return p+crc16(p)}
 function saveLocal(){try{localStorage.setItem(LK,JSON.stringify(cargas))}catch(e){}}
 function put(c){var i=cargas.findIndex(function(x){return x.id===c.id});if(i<0)cargas.push(c);else cargas[i]=c;
  if(db){db.collection('cargas').doc(c.id).set(c).catch(function(){})}else saveLocal();render()}
@@ -235,7 +284,14 @@ function pdfLayout(groups,meta){
    T(PM+10,y+16,x.n,10,0);T(250,y+16,num(x.q)+' un.',10,0,C_TX,'r');T(350,y+16,brl(x.v),10,1,C_TX,'r');T(455,y+16,brl(x.v-x.pd),10,0,C_GN,'r');T(PW-PM-10,y+16,brl(x.pd),10,0,C_AM,'r');y+=24});
   if(y>PH-70)np(false);
   R(PM,y+4,CW,30,C_TT,6);T(PM+10,y+23,'Total geral',10.5,1,C_DK);T(250,y+23,num(gq)+' un.',10.5,1,C_DK,'r');T(350,y+23,brl(gv),10.5,1,C_DK,'r');T(455,y+23,brl(gv-gp),10.5,1,C_GN,'r');T(PW-PM-10,y+23,brl(gp),10.5,1,C_AM,'r')}
- if(meta.pix&&meta.pix.key&&AP.v>0){if(y>PH-130)np(false);R(PM,y,CW,64,C_BG,8);R(PM,y,4,64,C_GN,2);T(PM+16,y+18,'PAGAMENTO VIA PIX',7.5,1,C_GR);T(PM+16,y+39,meta.pix.key,13,1,C_DK);if(meta.pix.name)T(PM+16,y+55,'Favorecido: '+meta.pix.name,9,0,C_GR);T(PW-PM-14,y+18,'VALOR EM ABERTO',7.5,1,C_GR,'r');T(PW-PM-14,y+44,brl(AP.v),15,1,C_AM,'r');y+=76}
+ if(meta.pix&&meta.pix.key&&AP.v>0){
+  var qm=null;try{qm=qrMake(pixPayload(meta.pix.key,meta.pix.name,meta.pix.city,meta.pix.val===false?0:AP.v))}catch(e){qm=null}
+  if(y>PH-(qm?170:130))np(false);
+  if(qm){var ky=meta.pix.key,ksz=tw(ky,13,1)>330?10:13,tx=PM+142;
+   R(PM,y,CW,128,C_BG,8);R(PM,y,4,128,C_GN,2);R(PM+16,y+10,108,108,[255,255,255],8);cur.push({k:'q',x:PM+24,y:y+18,sz:92,m:qm});
+   T(tx,y+22,'PAGAMENTO VIA PIX',7.5,1,C_GR);T(tx,y+42,ky,ksz,1,C_DK);if(meta.pix.name)T(tx,y+57,'Favorecido: '+meta.pix.name,9,0,C_GR);
+   T(tx,y+80,'VALOR EM ABERTO',7.5,1,C_GR);T(tx,y+99,brl(AP.v),16,1,C_AM);T(tx,y+118,'Aponte a câmera do app do seu banco para ler o QR Code.',8,0,C_GR);y+=140}
+  else{R(PM,y,CW,64,C_BG,8);R(PM,y,4,64,C_GN,2);T(PM+16,y+18,'PAGAMENTO VIA PIX',7.5,1,C_GR);T(PM+16,y+39,meta.pix.key,13,1,C_DK);if(meta.pix.name)T(PM+16,y+55,'Favorecido: '+meta.pix.name,9,0,C_GR);T(PW-PM-14,y+18,'VALOR EM ABERTO',7.5,1,C_GR,'r');T(PW-PM-14,y+44,brl(AP.v),15,1,C_AM,'r');y+=76}}
  pages.forEach(function(pg,i){cur=pg;Ln(PM,PH-34,PW-PM,PH-34,[210,214,212],0.6);T(PM,PH-20,'Colheita de couve  |  gerado pelo app Couve',8,0,C_GR);T(PW-PM,PH-20,'Página '+(i+1)+' de '+pages.length,8,0,C_GR,'r')});
  return pages}
 function n2(v){return String(Math.round(v*100)/100)}
@@ -251,6 +307,7 @@ function pdfBytes(pages){
  objs[4]='<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>';
  pages.forEach(function(pg,i){
   var ops=pg.map(function(e){
+   if(e.k==='q'){var qn=e.m.length,qu=e.sz/qn,qo='0 g',qr2,qc;for(qr2=0;qr2<qn;qr2++)for(qc=0;qc<qn;qc++)if(e.m[qr2][qc])qo+=' '+n2(e.x+qc*qu)+' '+n2(PH-e.y-(qr2+1)*qu)+' '+n2(qu+0.1)+' '+n2(qu+0.1)+' re';return qo+' f'}
    if(e.k==='p')return col(e.f)+' rg '+pth(e.d)+' f';
    if(e.k==='l')return col(e.c)+' RG '+e.lw+' w '+n2(e.x1)+' '+n2(PH-e.y1)+' m '+n2(e.x2)+' '+n2(PH-e.y2)+' l S';
    var w=tw(e.s,e.sz,e.b),X=e.al==='r'?e.x-w:e.al==='c'?e.x-w/2:e.x;
@@ -270,6 +327,7 @@ function svgPage(pg){
  var b='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 '+PW+' '+PH+'" style="width:100%;display:block;background:#fff;border-radius:6px;box-shadow:0 2px 10px #0004;margin-bottom:12px"><rect width="'+PW+'" height="'+PH+'" fill="#fff"/>';
  pg.forEach(function(e){
   if(e.k==='p')b+='<path fill="'+fc(e.f)+'" d="'+e.d.map(function(q){return q[0]==='Z'?'Z':q[0]+q.slice(1).map(n2).join(' ')}).join(' ')+'"/>';
+  else if(e.k==='q'){var qn=e.m.length,qu=e.sz/qn,qd='',qr2,qc;for(qr2=0;qr2<qn;qr2++)for(qc=0;qc<qn;qc++)if(e.m[qr2][qc])qd+='M'+n2(e.x+qc*qu)+' '+n2(e.y+qr2*qu)+'h'+n2(qu)+'v'+n2(qu)+'h-'+n2(qu)+'z';b+='<path fill="#000" shape-rendering="crispEdges" d="'+qd+'"/>'}
   else if(e.k==='l')b+='<line x1="'+e.x1+'" y1="'+e.y1+'" x2="'+e.x2+'" y2="'+e.y2+'" stroke="'+fc(e.c)+'" stroke-width="'+e.lw+'"/>';
   else b+='<text x="'+e.x+'" y="'+e.y+'" font-size="'+e.sz+'" font-weight="'+(e.b?700:400)+'" text-anchor="'+(e.al==='r'?'end':e.al==='c'?'middle':'start')+'" fill="'+fc(e.c)+'" font-family="Helvetica Neue,Helvetica,Arial,sans-serif" xml:space="preserve">'+xe(e.s)+'</text>'});
  return b+'</svg>'}
@@ -317,7 +375,7 @@ function render(){applyRec();var h='';
   var by={};l.forEach(function(c){var k=c.b||'Sem comprador';by[k]=by[k]||{q:0,v:0,r:0};by[k].q+=c.q;by[k].v+=c.q*c.p;if(!c.ok)by[k].r+=c.q*c.p});
   var bk=Object.keys(by).sort(function(a,b){return by[b].v-by[a].v});
   var bh='<h2>Vendas por comprador — '+pl+'</h2><div class="card">'+(bk.map(function(k){return '<div class="item"><div class="main">'+esc(k)+'<small>'+num(by[k].q)+' un.'+(by[k].r>0?' · a receber '+brl(by[k].r):'')+'</small></div><b>'+brl(by[k].v)+'</b></div>'}).join('')||'<small style="color:var(--mut)">Nenhuma venda neste período.</small>')+'</div>';
-  h+='<h1>Olá '+NAME+' 👋</h1><div style="color:var(--mut)">'+g+'! Veja a couve colhida.</div>'+bkCard()+'<div class="seg" style="margin-top:12px"><button data-p="t" class="'+(per==='t'?'on':'')+'">Total</button><button data-p="d" class="'+(per==='d'?'on':'')+'">Hoje</button></div>'+
+  h+='<h1>Olá '+NAME+' 👋</h1><div style="color:var(--mut)">'+g+'! Veja a couve colhida.</div>'+bkCard()+'<div class="seg" style="margin-top:12px"><button data-p="t" class="'+(per==='t'?'on':'')+'">Total</button><button data-p="d" class="'+(per==='d'?'on':'')+'">Dia</button><button data-p="w" class="'+(per==='w'?'on':'')+'">Semana</button><button data-p="m" class="'+(per==='m'?'on':'')+'">Mês</button></div>'+
   '<div class="card hero"><small>Sua parte (metade) — '+pl+'</small><div class="huge">'+brl(t.v/2)+'</div><div class="hr"></div><div class="row sp"><div><small>Valor total</small><div class="mid">'+brl(t.v)+'</div></div><div style="text-align:right"><small>Colhido '+pl+'</small><div class="mid">'+num(t.q)+' un.</div></div></div></div>'+
   '<div class="card row sp"><div><small class="pill">Ainda a receber (geral)</small><div><b>'+brl(pend.v)+'</b> <span class="pill">· metade '+brl(pend.v/2)+'</span></div></div></div>'+
   bh}
@@ -352,7 +410,7 @@ document.addEventListener('click',function(e){var t=e.target,d=t.dataset||{};
  if(d.grdel!==undefined){if(confirm('Parar de repetir este gasto? Os lançamentos já feitos continuam.')){grec=grec.filter(function(x){return x.id!==d.grdel});saveGr();render()}return}
  if(d.bkn){saveBackup();lbSet();render();return}
  if(d.bks){try{localStorage.setItem(LK+'-lbs',nextDay(today(),1))}catch(e){}render();return}
- if(d.pxs){pix={key:$('#pxk').value.trim(),name:$('#pxn').value.trim()};savePix();$('#pxm').textContent='Salvo.';return}
+ if(d.pxs){pix={key:$('#pxk').value.trim(),name:$('#pxn').value.trim(),city:$('#pxc').value.trim(),val:!!$('#pxv').checked};savePix();$('#pxm').textContent='Salvo.';return}
  if(d.gc!==undefined){gcat=(gcat===d.gc)?'':d.gc;$('#gcs').innerHTML=gcatHTML();return}
  if(d.gnc){var gn=addGcat($('#gnc').value);if(gn){gcat=gn;$('#gcs').innerHTML=gcatHTML();$('#gnc').value=''}return}
  if(d.gdd){var gx=new Date($('#gd').value+'T12:00:00');if(isNaN(gx))gx=new Date(today()+'T12:00:00');gx.setDate(gx.getDate()+parseInt(d.gdd,10));$('#gd').value=gx.toISOString().slice(0,10);return}
