@@ -2,7 +2,7 @@
 <html lang="pt-BR"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Couve"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><link rel="manifest" href="manifest.json"><link rel="apple-touch-icon" href="icon-v3.png"><link rel="icon" href="icon-v3.png">
-<meta name="app-version" content="2026-11-09b"><meta name="theme-color" content="#070D0A"><title>Couve</title>
+<meta name="app-version" content="2026-11-09c"><meta name="theme-color" content="#070D0A"><title>Couve</title>
 <style>
 :root{--bg:#070D0A;--card:#0E1713;--bd:#1A2922;--tx:#EAF2ED;--mut:#8FA699;--pri:#5EE0A0;--onpri:#03180D;--hero:#0B3B28;--ok:#5EE0A0;--warn:#F0BE63;color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 html,body{margin:0;background:var(--bg);color:var(--tx);font:16px -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,Segoe UI,Roboto,sans-serif;font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased}
@@ -60,6 +60,7 @@ nav button{flex:1;border:0;background:none;display:flex;flex-direction:column;al
 .tabs{display:flex;border-bottom:1px solid var(--bd);margin:14px 0 12px}.tabs button{flex:1;border:0;background:none;padding:10px 0;font-size:14px;font-weight:600;color:var(--mut);font-family:inherit;border-bottom:2px solid transparent;margin-bottom:-1px}.tabs button.on{color:var(--pri);border-bottom-color:var(--pri)}
 .cb{display:block;width:100%;text-align:left;border:0;border-bottom:1px solid var(--bd);background:none;color:inherit;font-family:inherit;font-size:inherit;padding:12px 0}.cb:last-child{border-bottom:0}
 .bar{height:6px;border-radius:3px;background:var(--bd);margin-top:8px}.bar i{display:block;height:6px;border-radius:3px;background:var(--pri)}
+.dts{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}.dts>div{min-width:0}.dts input{display:block;width:100%;min-width:0;max-width:100%;padding:0 10px;font-size:14px;text-align:left;-webkit-appearance:none;appearance:none;margin-bottom:0}
 </style></head><body>
 <main id="app"></main>
 <button class="fab" id="fab" aria-label="Nova carga"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
@@ -425,7 +426,7 @@ function repHTML(){
  pl=rst==='p'?' · a receber':rst==='o'?' · recebidas':'';
  h='<div class="rtop"><h1>Relatório</h1><button class="pdfb" data-pdf="1">'+ic('M14 3v4a1 1 0 001 1h4M17 21H7a2 2 0 01-2-2V5a2 2 0 012-2h7l5 5v11a2 2 0 01-2 2zM9 13h6M9 17h4')+'PDF'+pl+'</button></div>';
  h+='<div class="seg" style="margin-bottom:8px"><button data-rp="m" class="'+(rsel!=='custom'?'on':'')+'">Mês</button><button data-rp="custom" class="'+(rsel==='custom'?'on':'')+'">Escolher datas</button></div>';
- if(rsel==='custom')h+='<div class="card"><div class="row"><div style="flex:1"><label>De</label><input id="rfi" type="date" value="'+rf+'"></div><div style="flex:1"><label>Até</label><input id="rti" type="date" value="'+rt+'"></div></div></div>';
+ if(rsel==='custom')h+='<div class="card"><div class="dts"><div><label>De</label><input id="rfi" type="date" value="'+rf+'"></div><div><label>Até</label><input id="rti" type="date" value="'+rt+'"></div></div></div>';
  else h+='<div class="mnav"><button class="mb" data-rmn="-1" aria-label="Mês anterior"'+(rmo<=rMinOff()?' disabled':'')+'>'+ic('M15 6l-6 6 6 6')+'</button><b>'+monthName(ym)+'</b><button class="mb" data-rmn="1" aria-label="Próximo mês"'+(rmo>=0?' disabled':'')+'>'+ic('M9 6l6 6-6 6')+'</button></div>';
  h+='<div class="bxs"><button class="bx'+(rb==='all'?' on':'')+'" data-rbf="all">Todos</button><button class="bx'+(rb!=='all'?' on':'')+'" data-rbo="1"><span>'+(rb==='all'?'Comprador':esc(rb))+'</span>'+ic('M6 9l6 6 6-6',18)+'</button></div>';
  if(rbo)h+='<div class="card" style="padding:0 14px;margin:8px 0 0">'+(clis.length?clis.map(function(n){return '<button class="cb" data-rbf="'+esc(n)+'">'+esc(n)+(rb===n?' ✓':'')+'</button>'}).join(''):'<div style="padding:12px 0;color:var(--mut)">Nenhum comprador cadastrado.</div>')+'</div>';
