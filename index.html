@@ -433,7 +433,7 @@ function closePv(){$('#pv').style.display='none'}
 function sendPdf(){
  if(!pvU8)return;
  try{var blob=new Blob([pvU8],{type:'application/pdf'}),file=new File([blob],pvName,{type:'application/pdf'});
-  if(navigator.canShare&&navigator.canShare({files:[file]})){navigator.share({files:[file],title:pvName}).catch(function(){});return}
+  if(navigator.canShare&&navigator.canShare({files:[file]})){navigator.share({files:[file]}).catch(function(){});return}
   var u=URL.createObjectURL(blob),a=document.createElement('a');a.href=u;a.download=pvName;document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(u)},4000)}
  catch(e){alert('Não foi possível enviar o PDF neste aparelho.')}}
 var pdfNp=false,pdfObs='';
