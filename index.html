@@ -2,7 +2,7 @@
 <html lang="pt-BR"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Hidro Teixeira"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><link rel="manifest" href="manifest.json"><link rel="apple-touch-icon" href="icon-v3.png"><link rel="icon" href="icon-v3.png">
-<meta name="app-version" content="2026-11-12c"><meta name="theme-color" content="#070D0A"><title>Hidro Teixeira</title>
+<meta name="app-version" content="2026-11-13b"><meta name="theme-color" content="#070D0A"><title>Hidro Teixeira</title>
 <script>(function(){var m="c";try{m=localStorage.getItem("app-mode")==="h"?"h":"c"}catch(e){}document.documentElement.setAttribute("data-m",m);if(m==="h"){var t=document.querySelector('meta[name="theme-color"]');if(t)t.setAttribute("content","#06100F")}})()</script>
 <style>
 :root{--bg:#070D0A;--card:#0E1713;--bd:#1A2922;--tx:#EAF2ED;--mut:#8FA699;--pri:#5EE0A0;--onpri:#03180D;--hero:#0B3B28;--ok:#5EE0A0;--warn:#F0BE63;color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -104,7 +104,7 @@ function qsCard(){return '<div class="card"><b>Atalhos de quantidade</b><div sty
 function saveCli(){try{localStorage.setItem(LK+'-cli',JSON.stringify(clis))}catch(e){}}
 function addCli(n){n=String(n||'').trim();if(!n)return '';var f=clis.filter(function(x){return x.toLowerCase()===n.toLowerCase()})[0];if(f)return f;clis.push(n);saveCli();return n}
 function buyerHTML(){return clis.map(function(n){return '<button class="chip'+(n===buyer?' sel':'')+'" data-b="'+esc(n)+'">'+esc(n)+'</button>'}).join('')}
-function cliCard(){return '<div class="card"><b>Compradores</b>'+clis.map(function(n){return '<div class="item"><span>'+esc(n)+'</span><button class="x" data-rc="'+esc(n)+'">✕</button></div>'}).join('')+'<div class="row" style="margin-top:8px"><input id="cfgnb" placeholder="Novo comprador" style="margin:0"><button class="btn" style="width:auto;padding:12px 16px" data-cnb="1">Adicionar</button></div></div>'}
+function cliCard(){return '<div class="card"><b>Compradores</b>'+(MODE==='h'?'':'<p style="color:var(--mut);margin:6px 0 0;font-size:13px">Preço padrão por unidade: preenche sozinho ao escolher o comprador na nova carga.</p>')+clis.map(function(n){return '<div class="item" style="align-items:center"><span style="flex:1">'+esc(n)+'</span>'+(MODE==='h'?'':'<input data-bpi="'+esc(n)+'" inputmode="decimal" placeholder="R$ un." value="'+esc(bp[n]!=null?String(bp[n]).replace('.',','):'')+'" style="width:92px;margin:0;padding:8px 10px;text-align:right">')+'<button class="x" data-rc="'+esc(n)+'">✕</button></div>'}).join('')+'<div class="row" style="margin-top:8px"><input id="cfgnb" placeholder="Novo comprador" style="margin:0"><button class="btn" style="width:auto;padding:12px 16px" data-cnb="1">Adicionar</button></div></div>'}
 var gastos=[],gcats=(MODE==='h'?['Nutrientes','Energia','Água','Mudas','Mão de obra','Outros']:['Adubo','Diesel','Mão de obra','Outros']),bp={},gper='m',gcat='',editG=null,lastMark=[];
 try{var gj=localStorage.getItem(LK+'-g');if(gj){var g0=JSON.parse(gj);if(Array.isArray(g0))gastos=g0}}catch(e){}
 try{var gcj=localStorage.getItem(LK+'-gc');if(gcj){var g1=JSON.parse(gcj);if(Array.isArray(g1)&&g1.length)gcats=g1}}catch(e){}
@@ -371,6 +371,14 @@ function pdfLayout(groups,meta){
    T(PM+10,y+16,x.n,10,0);T(QS,y+16,num(x.q)+' un.',10,0,C_TX,'r');if(!NP){T(350,y+16,brl(x.v),10,1,C_TX,'r');T(455,y+16,brl(x.v-x.pd),10,0,C_GN,'r');T(PW-PM-10,y+16,brl(x.pd),10,0,C_AM,'r')}y+=24});
   if(y>PH-70)np(false);
   R(PM,y+4,CW,30,C_TT,6);T(PM+10,y+23,'Total geral',10.5,1,C_DK);T(QS,y+23,num(gq)+' un.',10.5,1,C_DK,'r');if(!NP){T(350,y+23,brl(gv),10.5,1,C_DK,'r');T(455,y+23,brl(gv-gp),10.5,1,C_GN,'r');T(PW-PM-10,y+23,brl(gp),10.5,1,C_AM,'r')}y+=46}
+ if(MODE==='h'){var pb={};all.forEach(function(c){var k=c.pr||'Sem produto';pb[k]=pb[k]||{q:0,v:0};pb[k].q+=c.q;pb[k].v+=c.q*c.p});
+  var pk=Object.keys(pb).sort(function(a,b){return NP?pb[b].q-pb[a].q:pb[b].v-pb[a].v});
+  if(pk.length>1){if(y>PH-150)np(false);gh('Resumo por produto',null);
+   R(PM,y,CW,22,C_DK,4);var w2=[255,255,255];T(PM+10,y+14.5,'PRODUTO',8,1,w2);T(QS,y+14.5,'QUANTIDADE',8,1,w2,'r');if(!NP)T(350,y+14.5,'VALOR',8,1,w2,'r');y+=22;
+   var tq=0,tv=0;
+   pk.forEach(function(k,i){if(y>PH-80)np(false);if(i%2)R(PM,y,CW,24,C_ZB);tq+=pb[k].q;tv+=pb[k].v;T(PM+10,y+16,k,10,0);T(QS,y+16,num(pb[k].q)+' un.',10,0,C_TX,'r');if(!NP)T(350,y+16,brl(pb[k].v),10,1,C_TX,'r');y+=24});
+   if(y>PH-70)np(false);
+   R(PM,y+4,CW,30,C_TT,6);T(PM+10,y+23,'Total',10.5,1,C_DK);T(QS,y+23,num(tq)+' un.',10.5,1,C_DK,'r');if(!NP)T(350,y+23,brl(tv),10.5,1,C_DK,'r');y+=46}}
  if(meta.obs){var ol=wrapTxt(meta.obs,CW-32,9),oi=0;
   while(oi<ol.length){var av=Math.floor((PH-46-y-32)/12);if(av<2){np(false);continue}
    var on=Math.min(ol.length-oi,av),bh=32+on*12;
@@ -447,7 +455,7 @@ function makePdf(keep){
  var groups=Object.keys(by).sort().map(function(k){return{name:k,list:by[k]}});
  var pages=pdfLayout(groups,{rf:rf,rt:rt,buyer:rb==='all'?'Todos':rb,pend:rst==='p',rec:rst==='o',pix:pix,np:pdfNp,obs:String(pdfObs||'').replace(/[‘’]/g,"'").replace(/[“”]/g,'"').replace(/[–—]/g,'-').replace(/[^\n\u0020-\u00ff]/g,'').trim()});
  var slug=String(rb==='all'?'todos':rb).normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-zA-Z0-9]+/g,'-').replace(/^-|-$/g,'');
- pvName='relatorio-'+slug+'-'+rf+'-a-'+rt+(pdfNp?'-sem-preco':'')+'.pdf';pvU8=pdfBytes(pages);
+ pvName='Relatório'+(rb==='all'?'':' '+String(rb).replace(/[\\\/:*?"<>|]+/g,' ').trim())+'.pdf';pvU8=pdfBytes(pages);
  $('#pvb').innerHTML=pages.map(svgPage).join('');$('#pv').style.display='flex';$('#pvb').scrollTop=st;$('#pvobs').value=pdfObs;document.querySelectorAll('[data-pvp]').forEach(function(b){b.classList.toggle('on',(b.dataset.pvp==='0')===pdfNp)})}
 function repHTML(){
  var l=repList(),t=tot(l),pend=tot(l.filter(function(c){return !c.ok})),rec=tot(l.filter(function(c){return c.ok})),ym=shiftM(today().slice(0,7),rmo),h,
@@ -576,7 +584,7 @@ document.addEventListener('click',function(e){var t=e.target,bt=t.closest&&t.clo
  if(t.id==='exp'){saveBackup();lbSet();render();return}
  if(t.id==='cp'){var sj=JSON.stringify(backupObj());if(navigator.clipboard)navigator.clipboard.writeText(sj).then(function(){lbSet();alert('Backup copiado!');render()},function(){prompt('Copie:',sj)});else prompt('Copie:',sj);return}
 });
-document.addEventListener('change',function(e){var i=e.target.id;if(i==='pvobs'){pdfObs=e.target.value;makePdf(true)}else if(i==='rfi'){rf=e.target.value;render()}else if(i==='rti'){rt=e.target.value;render()}else if(i==='fbsel'){fb=e.target.value;render()}else if(i==='lgf'){var f2=e.target.files&&e.target.files[0];if(f2)lgFile(f2)}else if(i==='rfile'){var f=e.target.files&&e.target.files[0];if(f){var fr=new FileReader();fr.onload=function(){var r2=restoreData(String(fr.result));$('#rmsg').textContent=r2.msg;if(r2.ok)render()};fr.onerror=function(){$('#rmsg').textContent='Não consegui ler o arquivo.'};fr.readAsText(f)}}});
+document.addEventListener('change',function(e){var i=e.target.id;if(e.target.dataset&&e.target.dataset.bpi!==undefined){var bn=e.target.dataset.bpi,bv=String(e.target.value||'').trim();if(bv)bp[bn]=bv;else delete bp[bn];saveBp();return}if(i==='pvobs'){pdfObs=e.target.value;makePdf(true)}else if(i==='rfi'){rf=e.target.value;render()}else if(i==='rti'){rt=e.target.value;render()}else if(i==='fbsel'){fb=e.target.value;render()}else if(i==='lgf'){var f2=e.target.files&&e.target.files[0];if(f2)lgFile(f2)}else if(i==='rfile'){var f=e.target.files&&e.target.files[0];if(f){var fr=new FileReader();fr.onload=function(){var r2=restoreData(String(fr.result));$('#rmsg').textContent=r2.msg;if(r2.ok)render()};fr.onerror=function(){$('#rmsg').textContent='Não consegui ler o arquivo.'};fr.readAsText(f)}}});
 if('serviceWorker' in navigator)try{navigator.serviceWorker.register('sw.js').catch(function(){})}catch(e){}
 (function(){var w=document.getElementById('msw');w.querySelectorAll('button').forEach(function(b){b.classList.toggle('on',b.dataset.md===MODE)});w.addEventListener('click',function(e){var b=e.target.closest('button[data-md]');if(!b||b.dataset.md===MODE)return;try{localStorage.setItem('app-mode',b.dataset.md)}catch(x){}location.reload()})})();
 render();
