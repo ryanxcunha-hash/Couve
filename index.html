@@ -2,7 +2,7 @@
 <html lang="pt-BR"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Hidro Teixeira"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><link rel="manifest" href="manifest.json"><link rel="apple-touch-icon" href="icon-v3.png"><link rel="icon" href="icon-v3.png">
-<meta name="app-version" content="2026-11-13e"><meta name="theme-color" content="#070D0A"><title>Hidro Teixeira</title>
+<meta name="app-version" content="2026-11-13f"><meta name="theme-color" content="#070D0A"><title>Hidro Teixeira</title>
 <script>(function(){var m="c";try{m=localStorage.getItem("app-mode")==="h"?"h":"c"}catch(e){}document.documentElement.setAttribute("data-m",m);if(m==="h"){var t=document.querySelector('meta[name="theme-color"]');if(t)t.setAttribute("content","#06100F")}})()</script>
 <style>
 :root{--bg:#070D0A;--card:#0E1713;--bd:#1A2922;--tx:#EAF2ED;--mut:#8FA699;--pri:#5EE0A0;--onpri:#03180D;--hero:#0B3B28;--ok:#5EE0A0;--warn:#F0BE63;color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -148,8 +148,8 @@ function cxSai(ym){return gastos.filter(function(g){return String(g.d).slice(0,7
 function cxHasSobra(ym){return Object.keys(cxS).some(function(k){return k<=ym})}
 function cxSobra(ym){var ks=Object.keys(cxS).filter(function(k){return k<=ym}).sort();if(!ks.length)return 0;var k=ks[ks.length-1],v=+cxS[k],g=0;while(k<ym&&g++<600){v+=cxEnt(k)-cxSai(k);k=shiftM(k,1)}return Math.round(v*100)/100}
 function relTabList(){var a=MODE==='h'?[['res','Resumo'],['prd','Produtos'],['cmp','Compradores'],['crg','Cargas']]:[['res','Resumo'],['cmp','Compradores'],['crg','Cargas']];return a}
-function cxHomeCard(){if(!cxOn)return '';var ym=today().slice(0,7),sd=Math.round((cxSobra(ym)+cxEnt(ym)-cxSai(ym))*100)/100;return '<button class="card row sp" data-gocx="1" style="width:100%;text-align:left;color:inherit;font:inherit;margin-top:14px"><span><small class="pill">Caixa de '+MESES[parseInt(ym.slice(5,7),10)-1].toLowerCase()+'</small><span style="display:block;font-size:20px;font-weight:700;margin-top:2px">'+brl(sd)+'</span></span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button>'}
-function cxCard(){return '<div class="card"><label class="row sp" style="font-size:15px;color:var(--tx)"><span><b>Caixa do mês</b><span style="display:block;color:var(--mut);font-size:13px;margin-top:4px">Mostra na tela Início um cartão com o saldo do mês. Ao tocar, abre a Caixa com entradas, saídas e sobra de cada mês.</span></span><input type="checkbox" id="cxon" style="width:auto;margin:0 0 0 12px"'+(cxOn?' checked':'')+'></label></div>'}
+function cxHomeCard(off){if(!cxOn)return '';off=off||0;var ym=shiftM(today().slice(0,7),off),sd=Math.round((cxSobra(ym)+cxEnt(ym)-cxSai(ym))*100)/100;return '<button class="card row sp" data-gocx="'+off+'" style="width:100%;text-align:left;color:inherit;font:inherit;margin:12px 0"><span><small class="pill">Caixa de '+MESES[parseInt(ym.slice(5,7),10)-1].toLowerCase()+'</small><span style="display:block;font-size:20px;font-weight:700;margin-top:2px">'+brl(sd)+'</span></span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button>'}
+function cxCard(){return '<div class="card"><label class="row sp" style="font-size:15px;color:var(--tx)"><span><b>Caixa do mês</b><span style="display:block;color:var(--mut);font-size:13px;margin-top:4px">Mostra no Relatório, abaixo dos valores, um cartão com o saldo do mês. Ao tocar, abre a Caixa com entradas, saídas e sobra de cada mês.</span></span><input type="checkbox" id="cxon" style="width:auto;margin:0 0 0 12px"'+(cxOn?' checked':'')+'></label></div>'}
 function cxHTML(){
  var ym=shiftM(today().slice(0,7),cxm),
  ic=function(p,z){z=z||20;return '<svg width="'+z+'" height="'+z+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="'+p+'"/></svg>'},
@@ -547,6 +547,7 @@ if(rpo)h+='<div class="card" style="padding:0 14px;margin:0 0 8px">'+[['m','Mês
   h+=(MODE==='h'?'<div class="card hero"><small>Valor total</small><div class="big" style="margin-bottom:12px">'+brl(t.v)+'</div><div class="hr"></div><div><small>Vendido</small><div class="mid">'+num(t.q)+' un.</div></div></div>':'<div class="card hero"><small>Sua parte (metade)</small><div class="big" style="margin-bottom:12px">'+brl(t.v/2)+'</div><div class="hr"></div><div class="row sp"><div><small>Valor total</small><div class="mid">'+brl(t.v)+'</div></div><div style="text-align:right"><small>Vendido</small><div class="mid">'+num(t.q)+' un.</div></div></div></div>');
   h+='<div class="tiles"><div class="tile"><small>Falta receber</small><div style="color:var(--warn)">'+brl(pend.v)+'</div>'+(MODE==='h'?'':'<small>metade '+brl(pend.v/2)+'</small>')+'</div><div class="tile"><small>Recebido</small><div style="color:var(--ok)">'+brl(rec.v)+'</div>'+(MODE==='h'?'':'<small>metade '+brl(rec.v/2)+'</small>')+'</div></div>';
   if(rb==='all'&&gastos.length){var gtr=gastos.filter(function(g){return g.d>=rf&&g.d<=rt}).reduce(function(a,g){return a+g.v},0),lur=t.v-gtr;h+='<div class="card"><div class="row sp"><div><small class="pill">Gastos no período</small><div><b>'+brl(gtr)+'</b></div></div><div style="text-align:right"><small class="pill">Lucro</small><div><b>'+brl(lur)+'</b>'+(MODE==='h'?'':' <span class="pill">· metade '+brl(lur/2)+'</span>')+'</div></div></div></div>'}
+  if(rb==='all')h+=cxHomeCard(rsel==='m'?rmo:0);
   h+=chartHTML()}
  else if(rtab==='prd'){
   var byp={};l.forEach(function(c){var k=c.pr||'Sem produto';byp[k]=byp[k]||{q:0,v:0,r:0};byp[k].q+=c.q;byp[k].v+=c.q*c.p;if(!c.ok)byp[k].r+=c.q*c.p});
@@ -568,7 +569,7 @@ function render(){applyRec();if(view==='cx'&&!cxOn)view='home';var h='';
   var by={};l.forEach(function(c){var k=c.b||'Sem comprador';by[k]=by[k]||{q:0,v:0,r:0};by[k].q+=c.q;by[k].v+=c.q*c.p;if(!c.ok)by[k].r+=c.q*c.p});
   var bk=Object.keys(by).sort(function(a,b){return by[b].v-by[a].v});
   var bh='<h2>Vendas por comprador — '+pl+'</h2><div class="card">'+(bk.map(function(k){return '<div class="item"><div class="main">'+esc(k)+'<small>'+num(by[k].q)+' un.'+(by[k].r>0?' · a receber '+brl(by[k].r):'')+'</small></div><b>'+brl(by[k].v)+'</b></div>'}).join('')||'<small style="color:var(--mut)">Nenhuma venda neste período.</small>')+'</div>';
-  h+='<h1>Olá, '+NAME+'</h1><div style="color:var(--mut);font-size:14px;margin-top:2px">'+g+'! '+(MODE==='h'?'Veja a produção da estufa.':'Veja a couve colhida.')+'</div>'+bkCard()+cxHomeCard()+'<div class="seg" style="margin-top:18px"><button data-p="t" class="'+(per==='t'?'on':'')+'">Total</button><button data-p="d" class="'+(per==='d'?'on':'')+'">Dia</button><button data-p="w" class="'+(per==='w'?'on':'')+'">Semana</button><button data-p="m" class="'+(per==='m'?'on':'')+'">Mês</button></div>'+
+  h+='<h1>Olá, '+NAME+'</h1><div style="color:var(--mut);font-size:14px;margin-top:2px">'+g+'! '+(MODE==='h'?'Veja a produção da estufa.':'Veja a couve colhida.')+'</div>'+bkCard()+'<div class="seg" style="margin-top:18px"><button data-p="t" class="'+(per==='t'?'on':'')+'">Total</button><button data-p="d" class="'+(per==='d'?'on':'')+'">Dia</button><button data-p="w" class="'+(per==='w'?'on':'')+'">Semana</button><button data-p="m" class="'+(per==='m'?'on':'')+'">Mês</button></div>'+
   (MODE==='h'?'<div class="card hero"><small>Valor total — '+pl+'</small><div class="huge">'+brl(t.v)+'</div><div class="hr"></div><div><small>Colhido '+pl+'</small><div class="mid">'+num(t.q)+' un.</div></div></div>':'<div class="card hero"><small>Sua parte (metade) — '+pl+'</small><div class="huge">'+brl(t.v/2)+'</div><div class="hr"></div><div class="row sp"><div><small>Valor total</small><div class="mid">'+brl(t.v)+'</div></div><div style="text-align:right"><small>Colhido '+pl+'</small><div class="mid">'+num(t.q)+' un.</div></div></div></div>')+
   '<div class="card row sp"><div><small class="pill">Ainda a receber (geral)</small><div style="font-size:20px;font-weight:700;color:var(--warn)">'+brl(pend.v)+'</div></div>'+(MODE==='h'?'':'<div class="pill" style="text-align:right">metade<br><b style="color:var(--tx);font-size:14px">'+brl(pend.v/2)+'</b></div>')+'</div>'+weekChartHTML()+
   (MODE==='h'?prodSumHTML(l,pl):'')+bh}
@@ -578,7 +579,7 @@ function render(){applyRec();if(view==='cx'&&!cxOn)view='home';var h='';
  else if(view==='gas'){h+=gastosHTML()}
  else{h+=(MODE==='h'?prodCard():'')+cliCard()+qsCard()+gcatCard()+cxCard()+logoCard()+pixCard()+'<div class="card"><b>Seus dados</b><p style="color:var(--mut);margin:6px 0 0">As cargas ficam salvas neste aparelho. Faça backup de vez em quando.</p></div>'+
   '<div class="card"><b>Backup</b><div style="color:var(--mut);font-size:13px;margin:4px 0 10px">Guarda cargas, gastos, compradores e atalhos. Salve de vez em quando em um lugar seguro.'+(lbGet()?' Último backup: '+fdate(lbGet())+'.':'')+'</div><button class="btn ghost" id="exp">Baixar backup</button><div style="height:8px"></div><button class="btn ghost" id="cp">Copiar backup</button><div style="height:8px"></div><button class="btn ghost" id="rst">Restaurar backup</button></div>'}
- $('#app').innerHTML=h;document.querySelectorAll('nav button').forEach(function(b){b.classList.toggle('on',b.dataset.v===view||(view==='cx'&&b.dataset.v==='home'))});$('#fab').style.display=(view==='cfg'||view==='rep'||view==='cx')?'none':''}
+ $('#app').innerHTML=h;document.querySelectorAll('nav button').forEach(function(b){b.classList.toggle('on',b.dataset.v===view||(view==='cx'&&b.dataset.v==='rep'))});$('#fab').style.display=(view==='cfg'||view==='rep'||view==='cx')?'none':''}
 function openForm(id){editId=id||null;added=[];var c=cargas.filter(function(x){return x.id===id})[0]||{};
  if(c.id)buyer=c.b||'';else{try{buyer=localStorage.getItem(LK+'-b')||''}catch(e){buyer=''}}
  if(MODE==='h'){if(c.id)prod=c.pr||'';else{try{prod=localStorage.getItem(LK+'-pr')||''}catch(e){prod=''}}}
@@ -613,8 +614,8 @@ document.addEventListener('click',function(e){var t=e.target,bt=t.closest&&t.clo
  if(d.bks){try{localStorage.setItem(LK+'-lbs',nextDay(today(),1))}catch(e){}render();return}
  if(d.pxs){pix={key:$('#pxk').value.trim(),name:$('#pxn').value.trim(),city:$('#pxc').value.trim(),val:!!$('#pxv').checked};savePix();$('#pxm').textContent='Salvo.';return}
  if(d.gc!==undefined){gcat=(gcat===d.gc)?'':d.gc;$('#gcs').innerHTML=gcatHTML();return}
- if(d.gocx){view='cx';cxm=0;return render()}
- if(d.cxback){view='home';return render()}
+ if(d.gocx){view='cx';cxm=Math.min(0,parseInt(d.gocx,10)||0);return render()}
+ if(d.cxback){view='rep';rtab='res';return render()}
  if(d.cxpdf){return makeCxPdf()}
  if(d.cxn){cxm=Math.min(0,Math.max(-60,cxm+parseInt(d.cxn,10)));return render()}
  if(d.cxadd){return openCx()}
