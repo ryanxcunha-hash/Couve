@@ -2,7 +2,7 @@
 <html lang="pt-BR"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Hidro Teixeira"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><link rel="manifest" href="manifest.json"><link rel="apple-touch-icon" href="icon-v3.png"><link rel="icon" href="icon-v3.png">
-<meta name="app-version" content="2026-11-13b"><meta name="theme-color" content="#070D0A"><title>Hidro Teixeira</title>
+<meta name="app-version" content="2026-11-13c"><meta name="theme-color" content="#070D0A"><title>Hidro Teixeira</title>
 <script>(function(){var m="c";try{m=localStorage.getItem("app-mode")==="h"?"h":"c"}catch(e){}document.documentElement.setAttribute("data-m",m);if(m==="h"){var t=document.querySelector('meta[name="theme-color"]');if(t)t.setAttribute("content","#06100F")}})()</script>
 <style>
 :root{--bg:#070D0A;--card:#0E1713;--bd:#1A2922;--tx:#EAF2ED;--mut:#8FA699;--pri:#5EE0A0;--onpri:#03180D;--hero:#0B3B28;--ok:#5EE0A0;--warn:#F0BE63;color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -58,7 +58,7 @@ nav button{flex:1;border:0;background:none;display:flex;flex-direction:column;al
 .rtop{display:flex;justify-content:space-between;align-items:center;margin:10px 2px 12px}.rtop h1{margin:0}
 .pdfb{display:flex;align-items:center;gap:6px;height:40px;padding:0 14px;border-radius:20px;border:1px solid var(--bd);background:var(--card);color:var(--pri);font-size:14px;font-weight:600;font-family:inherit;white-space:nowrap}
 .bxs{display:flex;gap:10px}.bx{flex:1;min-width:0;height:46px;border-radius:14px;border:1px solid var(--bd);background:var(--card);color:var(--tx);font-size:14px;font-weight:600;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px;padding:0 10px}.bx.on{background:var(--pri);border-color:var(--pri);color:var(--onpri)}.bx span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.tabs{display:flex;border-bottom:1px solid var(--bd);margin:14px 0 12px}.tabs button{flex:1;border:0;background:none;padding:10px 0;font-size:14px;font-weight:600;color:var(--mut);font-family:inherit;border-bottom:2px solid transparent;margin-bottom:-1px}.tabs button.on{color:var(--pri);border-bottom-color:var(--pri)}
+.tabs{display:flex;border-bottom:1px solid var(--bd);margin:14px 0 12px;overflow-x:auto;scrollbar-width:none}.tabs::-webkit-scrollbar{display:none}.tabs button{flex:1 0 auto;white-space:nowrap;border:0;background:none;padding:10px 12px;font-size:14px;font-weight:600;color:var(--mut);font-family:inherit;border-bottom:2px solid transparent;margin-bottom:-1px}.tabs button.on{color:var(--pri);border-bottom-color:var(--pri)}
 .dts input::-webkit-date-and-time-value{text-align:center;margin:0 auto;min-height:1.2em}.cb{display:block;width:100%;text-align:left;border:0;border-bottom:1px solid var(--bd);background:none;color:inherit;font-family:inherit;font-size:inherit;padding:12px 0}.cb:last-child{border-bottom:0}
 .bar{height:6px;border-radius:3px;background:var(--bd);margin-top:8px}.bar i{display:block;height:6px;border-radius:3px;background:var(--pri)}
 .dts{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}.dts>div{min-width:0}.dts label{display:block;text-align:center}.dts input{display:flex;align-items:center;justify-content:center;width:100%;min-width:0;max-width:100%;padding:0 10px;font-size:14px;text-align:center;line-height:46px;-webkit-appearance:none;appearance:none;margin-bottom:0}
@@ -135,7 +135,60 @@ function openGasto(id){editG=id||null;gfreq='';var g=gastos.filter(function(x){r
  $('#shc').innerHTML='<div class="row sp"><h1>'+(g.id?'Editar gasto':'Novo gasto')+'</h1><button class="xc" data-close="1" aria-label="Fechar"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div><label>Valor (R$)</label><input id="gv" inputmode="decimal" placeholder="0,00" value="'+(g.v!=null?String(g.v).replace('.',','):'')+'"><label>Categoria</label><div class="chips" id="gcs" style="flex-wrap:wrap;margin:4px 0 8px">'+gcatHTML()+'</div><div class="row" style="margin-bottom:10px"><input id="gnc" placeholder="Nova categoria" style="margin:0"><button class="btn" style="width:auto;padding:12px 16px" data-gnc="1">Adicionar</button></div><label>Data</label><div class="row"><button class="btn ghost" style="width:52px;padding:12px 0;margin:4px 0 10px" data-gdd="-1">‹</button><input id="gd" type="date" value="'+(g.d||today())+'"><button class="btn ghost" style="width:52px;padding:12px 0;margin:4px 0 10px" data-gdd="1">›</button></div><label>Observação (opcional)</label><input id="gn" value="'+esc(g.n||'')+'">'+(g.id?'':'<label>Repetir</label><div class="chips" id="gfr" style="margin:4px 0 12px">'+gfreqHTML()+'</div>')+'<button class="btn" id="gs">Salvar</button><div style="height:8px"></div><button class="btn ghost" id="fcx">Cancelar</button>';
  $('#sh').classList.add('open');if(!g.id)setTimeout(function(){$('#gv').focus()},50)}
 function persistC(ids){if(db){cargas.forEach(function(c){if(!ids||ids.indexOf(c.id)>=0)db.collection('cargas').doc(c.id).set(c).catch(function(){})})}else saveLocal()}
-function backupObj(){return{app:(MODE==='h'?'hidro':'couve'),v:2,em:new Date().toISOString(),cargas:cargas,gastos:gastos,clis:clis,prods:prods,pp:pp,qs:qs,gcats:gcats,bp:bp,lastPrice:lastPrice,grec:grec,pix:pix,logo:(lgCur===LOGO?undefined:(lgCur||'none')),co:coName()}}
+var cx=[],cxS={},cxOn=false,cxm=0,cxE=false,cxG=false,cxEd=null;
+try{var cxj=localStorage.getItem(LK+'-cx');if(cxj){var cx0=JSON.parse(cxj);if(Array.isArray(cx0))cx=cx0}}catch(e){}
+try{var cxsj=localStorage.getItem(LK+'-cxs');if(cxsj){var cxs0=JSON.parse(cxsj);if(cxs0&&typeof cxs0==='object'&&!Array.isArray(cxs0))cxS=cxs0}}catch(e){}
+try{cxOn=localStorage.getItem(LK+'-cxon')==='1'}catch(e){}
+function saveCx(){try{localStorage.setItem(LK+'-cx',JSON.stringify(cx))}catch(e){}}
+function saveCxS(){try{localStorage.setItem(LK+'-cxs',JSON.stringify(cxS))}catch(e){}}
+function saveCxOn(){try{localStorage.setItem(LK+'-cxon',cxOn?'1':'0')}catch(e){}}
+function cxEnt(ym){return cx.filter(function(r){return String(r.d).slice(0,7)===ym}).reduce(function(a,r){return a+r.v},0)}
+function cxSai(ym){return gastos.filter(function(g){return String(g.d).slice(0,7)===ym}).reduce(function(a,g){return a+g.v},0)}
+function cxHasSobra(ym){return Object.keys(cxS).some(function(k){return k<=ym})}
+function cxSobra(ym){var ks=Object.keys(cxS).filter(function(k){return k<=ym}).sort();if(!ks.length)return 0;var k=ks[ks.length-1],v=+cxS[k],g=0;while(k<ym&&g++<600){v+=cxEnt(k)-cxSai(k);k=shiftM(k,1)}return Math.round(v*100)/100}
+function relTabList(){var a=MODE==='h'?[['res','Resumo'],['prd','Produtos'],['cmp','Compradores'],['crg','Cargas']]:[['res','Resumo'],['cmp','Compradores'],['crg','Cargas']];if(cxOn)a.push(['cx','Caixa']);return a}
+function cxCard(){return '<div class="card"><label class="row sp" style="font-size:15px;color:var(--tx)"><span><b>Caixa do mês</b><span style="display:block;color:var(--mut);font-size:13px;margin-top:4px">Mostra no Relatório uma aba com saldo, entradas, saídas e sobra de cada mês.</span></span><input type="checkbox" id="cxon" style="width:auto;margin:0 0 0 12px"'+(cxOn?' checked':'')+'></label></div>'}
+function cxHTML(){
+ var ym=shiftM(today().slice(0,7),cxm),
+ ic=function(p,z){z=z||20;return '<svg width="'+z+'" height="'+z+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="'+p+'"/></svg>'},
+ so=cxSobra(ym),en=cxEnt(ym),sa=cxSai(ym),sd=Math.round((so+en-sa)*100)/100,pend=tot(cargas.filter(function(c){return !c.ok})).v,
+ srt=function(a,b){return String(b.d).localeCompare(String(a.d))||String(b.id).localeCompare(String(a.id))},
+ ents=cx.filter(function(r){return String(r.d).slice(0,7)===ym}).sort(srt),
+ gs=gastos.filter(function(g){return String(g.d).slice(0,7)===ym}).sort(srt),lim=5,
+ h='<div class="rtop"><h1>Relatório</h1><button class="pdfb" data-cxpdf="1">'+ic('M14 3v4a1 1 0 001 1h4M17 21H7a2 2 0 01-2-2V5a2 2 0 012-2h7l5 5v11a2 2 0 01-2 2zM9 13h6M9 17h4')+'PDF</button></div>';
+ h+='<div class="mnav"><button class="mb" data-cxn="-1" aria-label="Mês anterior"'+(cxm<=-60?' disabled':'')+'>'+ic('M15 6l-6 6 6 6')+'</button><b>'+monthName(ym)+'</b><button class="mb" data-cxn="1" aria-label="Próximo mês"'+(cxm>=0?' disabled':'')+'>'+ic('M9 6l6 6-6 6')+'</button></div>';
+ h+='<div class="tabs">'+relTabList().map(function(x){return '<button data-rtab="'+x[0]+'" class="'+(rtab===x[0]?'on':'')+'">'+x[1]+'</button>'}).join('')+'</div>';
+ h+='<div class="card hero"><small>Saldo atual</small><div class="big" style="margin-bottom:12px">'+brl(sd)+'</div><div class="hr"></div>'
+  +'<button data-cxsb="1" class="row sp" style="width:100%;background:none;border:0;color:inherit;font:inherit;padding:8px 0 4px;text-align:left"><span>Sobra do mês anterior '+ic('M4 20h4l10-10-4-4L4 16v4zM13 7l4 4',14)+'</span><b>'+brl(so)+'</b></button>'
+  +'<div class="row sp" style="padding:4px 0"><span>(+) Entrou</span><b>'+brl(en)+'</b></div>'
+  +'<div class="row sp" style="padding:4px 0"><span>(−) Saiu</span><b>'+brl(sa)+'</b></div></div>';
+ if(!cxHasSobra(ym))h+='<div class="cap" style="margin:8px 2px 0">Toque na sobra do mês anterior para informar o valor que veio de antes.</div>';
+ h+='<div class="cap" style="margin:8px 2px 0">A receber das cargas: <b>'+brl(pend)+'</b> (não entra no saldo)</div>';
+ h+='<div class="row sp" style="margin:18px 0 8px"><b style="font-size:16px">Entrou</b><button class="pdfb" data-cxadd="1">+ Entrada</button></div>';
+ h+=ents.length?'<div class="card" style="padding:0 14px">'+(cxE?ents:ents.slice(0,lim)).map(function(r){return '<button class="cb" data-cxe="'+esc(r.id)+'"><span class="row sp"><span style="min-width:0"><span style="display:block;font-weight:600">'+esc(r.w||'Entrada')+'</span><small style="color:var(--mut);display:block;margin-top:2px">'+fdate(r.d)+'</small></span><b style="color:var(--ok)">+ '+brl(r.v)+'</b></span></button>'}).join('')+(ents.length>lim?'<button class="cb" data-cxall="e" style="color:var(--mut)">'+(cxE?'Mostrar menos':'Ver as '+ents.length+' entradas')+'</button>':'')+'</div>':'<div class="card"><small style="color:var(--mut)">Nenhuma entrada neste mês. Toque em + Entrada para lançar um recebimento.</small></div>';
+ h+='<div class="row sp" style="margin:18px 0 8px"><b style="font-size:16px">Saiu</b><small style="color:var(--mut)">vem de Gastos</small></div>';
+ h+=gs.length?'<div class="card" style="padding:0 14px">'+(cxG?gs:gs.slice(0,lim)).map(function(g){return '<div class="cb"><span class="row sp"><span style="min-width:0"><span style="display:block;font-weight:600">'+esc(g.n||g.c||'Gasto')+'</span><small style="color:var(--mut);display:block;margin-top:2px">'+fdate(g.d)+(g.n&&g.c?' · '+esc(g.c):'')+'</small></span><b style="color:#ef6b61">− '+brl(g.v)+'</b></span></div>'}).join('')+(gs.length>lim?'<button class="cb" data-cxall="g" style="color:var(--mut)">'+(cxG?'Mostrar menos':'Ver os '+gs.length+' gastos')+'</button>':'')+'</div>':'<div class="card"><small style="color:var(--mut)">Nenhum gasto neste mês.</small></div>';
+ return h}
+function openCx(id){cxEd=id||null;var r=cx.filter(function(x){return x.id===id})[0]||{},ym=shiftM(today().slice(0,7),cxm),dd=r.d||(ym===today().slice(0,7)?today():ym+'-01');
+ $('#shc').innerHTML='<div class="row sp"><h1>'+(r.id?'Editar entrada':'Nova entrada')+'</h1><button class="xc" data-close="1" aria-label="Fechar"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div><label>Quem pagou</label><input id="cxw" list="cxl" value="'+esc(r.w||'')+'" placeholder="Nome do comprador"><datalist id="cxl">'+clis.map(function(n){return '<option value="'+esc(n)+'"></option>'}).join('')+'</datalist><label>Valor (R$)</label><input id="cxv" inputmode="decimal" placeholder="0,00" value="'+(r.v!=null?String(r.v).replace('.',','):'')+'"><label>Data em que entrou</label><input id="cxd" type="date" value="'+dd+'"><button class="btn" id="cxs">Salvar</button><div style="height:8px"></div>'+(r.id?'<button class="btn ghost" data-cxdel="'+esc(r.id)+'">Remover entrada</button><div style="height:8px"></div>':'')+'<button class="btn ghost" id="fcx">Cancelar</button>';
+ $('#sh').classList.add('open');if(!r.id)setTimeout(function(){$('#cxw').focus()},50)}
+function openCxS(){var ym=shiftM(today().slice(0,7),cxm),so=cxSobra(ym);
+ $('#shc').innerHTML='<div class="row sp"><h1>Sobra do mês anterior</h1><button class="xc" data-close="1" aria-label="Fechar"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div><div style="color:var(--mut);font-size:14px;margin:6px 0 12px">Valor que veio para '+monthName(ym)+'. Os meses seguintes se ajustam sozinhos a partir dele.</div><label>Valor (R$)</label><input id="cxsv" inputmode="decimal" placeholder="0,00" value="'+(cxHasSobra(ym)?String(so).replace('.',','):'')+'"><button class="btn" id="cxss">Salvar</button><div style="height:8px"></div>'+(cxS[ym]!=null?'<button class="btn ghost" data-cxrs="1">Voltar ao cálculo automático</button><div style="height:8px"></div>':'')+'<button class="btn ghost" id="fcx">Cancelar</button>';
+ $('#sh').classList.add('open');setTimeout(function(){$('#cxsv').focus()},50)}
+function cleanObs(){return String(pdfObs||'').replace(/[‘’]/g,"'").replace(/[“”]/g,'"').replace(/[–—]/g,'-').replace(/[^\n\u0020-\u00ff]/g,'').trim()}
+function makeCxPdf(keep){
+ pdfCx=true;if(!keep)pdfObs='';
+ var st=keep?$('#pvb').scrollTop:0,ym=shiftM(today().slice(0,7),cxm),
+ srt=function(a,b){return String(a.d).localeCompare(String(b.d))||String(a.id).localeCompare(String(b.id))},
+ X={ym:ym,so:cxSobra(ym),en:cxEnt(ym),sa:cxSai(ym),pend:tot(cargas.filter(function(c){return !c.ok})).v,
+  ent:cx.filter(function(r){return String(r.d).slice(0,7)===ym}).sort(srt).map(function(r){return{d:r.d,t:r.w||'Entrada',v:r.v}}),
+  sai:gastos.filter(function(g){return String(g.d).slice(0,7)===ym}).sort(srt).map(function(g){return{d:g.d,t:[g.c,g.n].filter(Boolean).join(' - ')||'Gasto',v:g.v}})};
+ X.sd=Math.round((X.so+X.en-X.sa)*100)/100;
+ var pages=pdfLayout([],{cx:X,rf:ym+'-01',rt:ym+'-28',buyer:'',np:false,obs:cleanObs()});
+ pvName='Caixa '+monthName(ym)+'.pdf';pvU8=pdfBytes(pages);
+ $('#pvb').innerHTML=pages.map(svgPage).join('');$('#pv').style.display='flex';$('#pvb').scrollTop=st;$('#pvobs').value=pdfObs;
+ document.querySelectorAll('[data-pvp]').forEach(function(b){b.parentNode.style.display='none'})}
+function backupObj(){return{app:(MODE==='h'?'hidro':'couve'),v:2,em:new Date().toISOString(),cargas:cargas,gastos:gastos,clis:clis,prods:prods,pp:pp,qs:qs,gcats:gcats,bp:bp,lastPrice:lastPrice,grec:grec,cx:cx,cxs:cxS,cxon:cxOn,pix:pix,logo:(lgCur===LOGO?undefined:(lgCur||'none')),co:coName()}}
 function saveBackup(){var s=JSON.stringify(backupObj()),name=(MODE==='h'?'hidro':'couve')+'-backup-'+today()+'.json';
  try{var blob=new Blob([s],{type:'application/json'}),file=new File([blob],name,{type:'application/json'});
   if(navigator.canShare&&navigator.canShare({files:[file]})){navigator.share({files:[file],title:name}).catch(function(){});return}
@@ -158,10 +211,13 @@ function restoreData(txt){var o;try{o=JSON.parse(txt)}catch(e){return{ok:0,msg:'
  if(o.bp&&typeof o.bp==='object')Object.keys(o.bp).forEach(function(k){if(bp[k]==null&&o.bp[k]!=null)bp[k]=String(o.bp[k])});
  if(!lastPrice&&o.lastPrice){lastPrice=String(o.lastPrice);try{localStorage.setItem(LK+'-p',lastPrice)}catch(e){}}
  (Array.isArray(o.grec)?o.grec:[]).forEach(function(r){var v=r?+r.v:NaN;if(!r||typeof r.id!=='string'||!(v>0)||(r.freq!=='w'&&r.freq!=='m')||!okDate(r.last)){bad++;return}if(!grec.some(function(x){return x.id===r.id}))grec.push({id:r.id,v:v,c:String(r.c||''),n:String(r.n||''),freq:r.freq,day:Math.max(0,Math.min(31,+r.day||0)),last:r.last})});
+ (Array.isArray(o.cx)?o.cx:[]).forEach(function(r){var v=r?+r.v:NaN;if(!r||typeof r.id!=='string'||!okDate(r.d)||!(v>0)||!isFinite(v)){bad++;return}var n={id:r.id,d:r.d,w:String(r.w||''),v:v},i=cx.findIndex(function(x){return x.id===n.id});if(i<0)cx.push(n);else cx[i]=n});
+ if(o.cxs&&typeof o.cxs==='object')Object.keys(o.cxs).forEach(function(k){if(/^\d{4}-\d{2}$/.test(k)&&cxS[k]==null&&isFinite(+o.cxs[k]))cxS[k]=+o.cxs[k]});
+ if(o.cxon===true&&!cxOn){cxOn=true;saveCxOn()}
  if(o.pix&&typeof o.pix==='object'&&!pix.key&&o.pix.key){pix={key:String(o.pix.key),name:String(o.pix.name||''),city:String(o.pix.city||''),val:o.pix.val!==false};savePix()}
  if(o.logo==='none')lgSet(null);else if(o.logo&&typeof o.logo==='object'&&typeof o.logo.b64==='string'&&o.logo.w>0&&o.logo.h>0)lgSet({w:+o.logo.w,h:+o.logo.h,bg:Array.isArray(o.logo.bg)?o.logo.bg:[255,255,255],b64:o.logo.b64});
  if(typeof o.co==='string')coSet(o.co);
- persistC(null);saveG();saveGr();saveCli();saveQs();saveGc();saveBp();savePrd();savePp();
+ persistC(null);saveG();saveCx();saveCxS();saveGr();saveCli();saveQs();saveGc();saveBp();savePrd();savePp();
  return{ok:1,msg:'Pronto! '+nc+(nc===1?' carga nova':' cargas novas')+' e '+ng+(ng===1?' gasto novo':' gastos novos')+' adicionados.'+(bad?' '+bad+' itens incompletos foram ignorados.':'')}}
 function openRestore(){$('#shc').innerHTML='<div class="row sp"><h1>Restaurar backup</h1><button class="xc" data-close="1" aria-label="Fechar"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div><div style="color:var(--mut);font-size:14px;margin:6px 0 12px">Escolha o arquivo do backup ou cole o texto copiado. Os dados do backup são somados aos atuais e nada é apagado.</div><label>Arquivo de backup</label><input id="rfile" type="file" accept=".json,application/json,text/plain"><label>Ou cole o backup aqui</label><textarea id="rtxt" rows="4" style="width:100%;box-sizing:border-box;padding:13px;border-radius:12px;border:1px solid var(--bd);background:var(--bg);color:var(--tx);font-size:16px;margin:4px 0 10px"></textarea><div id="rmsg" class="pill" style="margin-bottom:10px"></div><button class="btn" id="rgo">Restaurar</button><div style="height:8px"></div><button class="btn ghost" id="fcx">Fechar</button>';$('#sh').classList.add('open')}
 var grec=[],pix={key:'',name:'',city:'',val:true},gfreq='';
@@ -320,7 +376,7 @@ function wrapTxt(t,mw,sz){var out=[];String(t).replace(/\r/g,'').split('\n').for
  ws.forEach(function(w){while(tw(w,sz,0)>mw){var k=w.length;while(k>1&&tw(w.slice(0,k),sz,0)>mw)k--;if(ln){out.push(ln);ln=''}out.push(w.slice(0,k));w=w.slice(k)}
  var tr=ln?ln+' '+w:w;if(tw(tr,sz,0)>mw){if(ln)out.push(ln);ln=w}else ln=tr});if(ln)out.push(ln)});return out}
 function pdfLayout(groups,meta){
- var pages=[],cur,y,NP=!!meta.np,QX=NP?340:235,QS=NP?340:250,PX=126;
+ var pages=[],cur,y,NP=!!meta.np,QX=NP?340:235,QS=NP?340:250,PX=126,TT=meta.cx?'Fechamento do mês':'Relatório de cargas';
  function T(x,yy,t,sz,b,c,al){cur.push({k:'t',x:x,y:yy,s:String(t).replace(/\u00a0/g,' '),sz:sz,b:b?1:0,c:c||C_TX,al:al||'l'})}
  function P(d,f){cur.push({k:'p',d:d,f:f})}
  function R(x,yy,w,h,f,r){P(rr(x,yy,w,h,r),f)}
@@ -328,12 +384,32 @@ function pdfLayout(groups,meta){
  function np(first){cur=[];pages.push(cur);
   if(first){R(0,0,PW,100,C_DK);R(0,100,PW,3,C_LG);var lg=curLogo(),tx0=PM;
    if(lg){var sc=Math.min(70/lg.h,96/lg.w),bw=Math.round(lg.w*sc),bh=Math.round(lg.h*sc),by=Math.round((100-bh)/2);R(PM,by,bw,bh,lg.bg,9);cur.push({k:'i',x:PM,y:by,w:bw,h:bh,r:9,img:lg});tx0=PM+bw+16}
-   var cn=coName();T(tx0,cn?46:54,'Relatório de cargas',20,1,[255,255,255]);if(cn)T(tx0,64,cn,10,0,[187,247,208]);
+   var cn=coName();T(tx0,cn?46:54,TT,20,1,[255,255,255]);if(cn)T(tx0,64,cn,10,0,[187,247,208]);
    T(PW-PM,42,'EMITIDO EM',7,1,[187,247,208],'r');T(PW-PM,58,fdate(today()),12,1,[255,255,255],'r');y=120}
-  else{R(0,0,PW,34,C_DK);R(0,34,PW,2,C_LG);T(PM,22,'Relatório de cargas',10,1,[255,255,255]);T(PW-PM,22,meta.buyer+'  |  '+fdate(meta.rf)+' a '+fdate(meta.rt),8,0,[187,247,208],'r');y=56}}
+  else{R(0,0,PW,34,C_DK);R(0,34,PW,2,C_LG);T(PM,22,TT,10,1,[255,255,255]);T(PW-PM,22,meta.cx?monthName(meta.cx.ym):meta.buyer+'  |  '+fdate(meta.rf)+' a '+fdate(meta.rt),8,0,[187,247,208],'r');y=56}}
  function gh(name,n){R(PM,y,4,18,C_GN,2);T(PM+12,y+13.5,name,13,1,C_DK);if(n!=null)T(PW-PM,y+13,n+(n===1?' carga':' cargas'),9,0,C_GR,'r');y+=28}
  function th(){R(PM,y,CW,22,C_DK,4);T(PM+10,y+14.5,'DATA',8,1,[255,255,255]);if(MODE==='h')T(PX,y+14.5,'PRODUTO',8,1,[255,255,255]);T(QX,y+14.5,'QUANTIDADE',8,1,[255,255,255],'r');if(!NP){T(330,y+14.5,'PREÇO UN.',8,1,[255,255,255],'r');T(440,y+14.5,'VALOR',8,1,[255,255,255],'r');T(466,y+14.5,'SITUAÇÃO',8,1,[255,255,255])}y+=22}
+ function drawObs(){
+ if(meta.obs){var ol=wrapTxt(meta.obs,CW-32,9),oi=0;
+  while(oi<ol.length){var av=Math.floor((PH-46-y-32)/12);if(av<2){np(false);continue}
+   var on=Math.min(ol.length-oi,av),bh=32+on*12;
+   R(PM,y,CW,bh,C_BG,8);R(PM,y,4,bh,C_LG,2);T(PM+16,y+17,oi?'OBSERVAÇÃO (continuação)':'OBSERVAÇÃO',7.5,1,C_GR);
+   for(var k=0;k<on;k++)T(PM+16,y+34+k*12,ol[oi+k],9,0,C_TX);
+   oi+=on;y+=bh+12}}}
+ function drawFoot(){
+ pages.forEach(function(pg,i){cur=pg;Ln(PM,PH-34,PW-PM,PH-34,[210,214,212],0.6);T(PM,PH-20,(coName()?coName()+'  |  ':'')+'gerado pelo app Hidro Teixeira',8,0,C_GR);T(PW-PM,PH-20,'Página '+(i+1)+' de '+pages.length,8,0,C_GR,'r')});}
  np(true);
+ function cxTable(title,rows,total,col,lab2){
+  if(y>PH-120)np(false);gh(title,null);
+  R(PM,y,CW,22,C_DK,4);T(PM+10,y+14.5,'DATA',8,1,[255,255,255]);T(PM+90,y+14.5,lab2,8,1,[255,255,255]);T(PW-PM-10,y+14.5,'VALOR',8,1,[255,255,255],'r');y+=22;
+  if(!rows.length){T(PM+10,y+16,'Nenhum lançamento neste mês.',9,0,C_GR);y+=26}
+  rows.forEach(function(r,i){if(y>PH-80)np(false);if(i%2)R(PM,y,CW,24,C_ZB);T(PM+10,y+16,fdate(r.d),10,0,C_TX);T(PM+90,y+16,String(r.t).slice(0,48),10,0,C_TX);T(PW-PM-10,y+16,brl(r.v),10,1,C_TX,'r');y+=24});
+  if(y>PH-70)np(false);R(PM,y+4,CW,30,C_TT,6);T(PM+10,y+23,'Total',10.5,1,C_DK);T(PW-PM-10,y+23,brl(total),10.5,1,col,'r');y+=46}
+ if(meta.cx){var X=meta.cx,RD=[185,28,28],kw=(CW-27)/4,ix2=PM;
+  [['SOBRA ANTERIOR',brl(X.so),C_DK],['ENTROU',brl(X.en),C_GN],['SAIU',brl(X.sa),RD],['SALDO ATUAL',brl(X.sd),C_DK]].forEach(function(k){R(ix2,y,kw,52,C_BG,7);R(ix2+9,y+10,3,32,k[2],1.5);T(ix2+20,y+21,k[0],7,1,C_GR);T(ix2+20,y+40,k[1],11,1,k[2]);ix2+=kw+9});
+  y+=64;T(PM,y+8,'MÊS: '+monthName(X.ym)+'     |     A receber das cargas (não entra no saldo): '+brl(X.pend),8.5,0,C_GR);y+=30;
+  cxTable('Entrou',X.ent,X.en,C_GN,'QUEM PAGOU');cxTable('Saiu',X.sai,X.sa,RD,'DESCRIÇÃO');
+  drawObs();drawFoot();return pages}
  var all=[];groups.forEach(function(g){all=all.concat(g.list)});
  var A=tot(all),AP=tot(all.filter(function(c){return !c.ok})),AR=A.v-AP.v;
  var info=[['COMPRADOR',meta.buyer,190],['PERÍODO',fdate(meta.rf)+' a '+fdate(meta.rt),190],['FILTRO',meta.pend?'Somente a receber':meta.rec?'Somente recebidas':'Todas as cargas',125]],ix=PM;
@@ -379,12 +455,7 @@ function pdfLayout(groups,meta){
    pk.forEach(function(k,i){if(y>PH-80)np(false);if(i%2)R(PM,y,CW,24,C_ZB);tq+=pb[k].q;tv+=pb[k].v;T(PM+10,y+16,k,10,0);T(QS,y+16,num(pb[k].q)+' un.',10,0,C_TX,'r');if(!NP)T(350,y+16,brl(pb[k].v),10,1,C_TX,'r');y+=24});
    if(y>PH-70)np(false);
    R(PM,y+4,CW,30,C_TT,6);T(PM+10,y+23,'Total',10.5,1,C_DK);T(QS,y+23,num(tq)+' un.',10.5,1,C_DK,'r');if(!NP)T(350,y+23,brl(tv),10.5,1,C_DK,'r');y+=46}}
- if(meta.obs){var ol=wrapTxt(meta.obs,CW-32,9),oi=0;
-  while(oi<ol.length){var av=Math.floor((PH-46-y-32)/12);if(av<2){np(false);continue}
-   var on=Math.min(ol.length-oi,av),bh=32+on*12;
-   R(PM,y,CW,bh,C_BG,8);R(PM,y,4,bh,C_LG,2);T(PM+16,y+17,oi?'OBSERVAÇÃO (continuação)':'OBSERVAÇÃO',7.5,1,C_GR);
-   for(var k=0;k<on;k++)T(PM+16,y+34+k*12,ol[oi+k],9,0,C_TX);
-   oi+=on;y+=bh+12}}
+ drawObs();
  if(!NP&&meta.pix&&meta.pix.key&&AP.v>0){
   var qm=null;try{qm=qrMake(pixPayload(meta.pix.key,meta.pix.name,meta.pix.city,meta.pix.val===false?0:AP.v))}catch(e){qm=null}
   if(y>PH-(qm?170:130))np(false);
@@ -393,7 +464,7 @@ function pdfLayout(groups,meta){
    T(tx,y+22,'PAGAMENTO VIA PIX',7.5,1,C_GR);T(tx,y+42,ky,ksz,1,C_DK);if(meta.pix.name)T(tx,y+57,'Favorecido: '+meta.pix.name,9,0,C_GR);
    T(tx,y+80,'VALOR EM ABERTO',7.5,1,C_GR);T(tx,y+99,brl(AP.v),16,1,C_AM);T(tx,y+118,'Aponte a câmera do app do seu banco para ler o QR Code.',8,0,C_GR);y+=140}
   else{R(PM,y,CW,64,C_BG,8);R(PM,y,4,64,C_GN,2);T(PM+16,y+18,'PAGAMENTO VIA PIX',7.5,1,C_GR);T(PM+16,y+39,meta.pix.key,13,1,C_DK);if(meta.pix.name)T(PM+16,y+55,'Favorecido: '+meta.pix.name,9,0,C_GR);T(PW-PM-14,y+18,'VALOR EM ABERTO',7.5,1,C_GR,'r');T(PW-PM-14,y+44,brl(AP.v),15,1,C_AM,'r');y+=76}}
- pages.forEach(function(pg,i){cur=pg;Ln(PM,PH-34,PW-PM,PH-34,[210,214,212],0.6);T(PM,PH-20,(coName()?coName()+'  |  ':'')+'gerado pelo app Hidro Teixeira',8,0,C_GR);T(PW-PM,PH-20,'Página '+(i+1)+' de '+pages.length,8,0,C_GR,'r')});
+ drawFoot();
  return pages}
 function n2(v){return String(Math.round(v*100)/100)}
 function pdfBytes(pages){
@@ -444,8 +515,9 @@ function sendPdf(){
   if(navigator.canShare&&navigator.canShare({files:[file]})){navigator.share({files:[file]}).catch(function(){});return}
   var u=URL.createObjectURL(blob),a=document.createElement('a');a.href=u;a.download=pvName;document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(u)},4000)}
  catch(e){alert('Não foi possível enviar o PDF neste aparelho.')}}
-var pdfNp=false,pdfObs='';
+var pdfNp=false,pdfObs='',pdfCx=false;
 function makePdf(keep){
+ pdfCx=false;
  if(!keep){pdfNp=false;pdfObs=''}
  var st=keep?$('#pvb').scrollTop:0;
  var l=repList().filter(function(c){return rst==='p'?!c.ok:rst==='o'?!!c.ok:true});
@@ -456,8 +528,10 @@ function makePdf(keep){
  var pages=pdfLayout(groups,{rf:rf,rt:rt,buyer:rb==='all'?'Todos':rb,pend:rst==='p',rec:rst==='o',pix:pix,np:pdfNp,obs:String(pdfObs||'').replace(/[‘’]/g,"'").replace(/[“”]/g,'"').replace(/[–—]/g,'-').replace(/[^\n\u0020-\u00ff]/g,'').trim()});
  var slug=String(rb==='all'?'todos':rb).normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-zA-Z0-9]+/g,'-').replace(/^-|-$/g,'');
  pvName='Relatório'+(rb==='all'?'':' '+String(rb).replace(/[\\\/:*?"<>|]+/g,' ').trim())+'.pdf';pvU8=pdfBytes(pages);
- $('#pvb').innerHTML=pages.map(svgPage).join('');$('#pv').style.display='flex';$('#pvb').scrollTop=st;$('#pvobs').value=pdfObs;document.querySelectorAll('[data-pvp]').forEach(function(b){b.classList.toggle('on',(b.dataset.pvp==='0')===pdfNp)})}
+ $('#pvb').innerHTML=pages.map(svgPage).join('');$('#pv').style.display='flex';$('#pvb').scrollTop=st;$('#pvobs').value=pdfObs;document.querySelectorAll('[data-pvp]').forEach(function(b){b.parentNode.style.display='';b.classList.toggle('on',(b.dataset.pvp==='0')===pdfNp)})}
 function repHTML(){
+ if(rtab==='cx'&&!cxOn)rtab='res';
+ if(rtab==='cx')return cxHTML();
  var l=repList(),t=tot(l),pend=tot(l.filter(function(c){return !c.ok})),rec=tot(l.filter(function(c){return c.ok})),ym=shiftM(today().slice(0,7),rmo),h,
  ic=function(p,z){z=z||20;return '<svg width="'+z+'" height="'+z+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="'+p+'"/></svg>'},
  pl=rst==='p'?' · a receber':rst==='o'?' · recebidas':'';
@@ -468,7 +542,7 @@ if(rpo)h+='<div class="card" style="padding:0 14px;margin:0 0 8px">'+[['m','Mês
  else h+='<div class="mnav"><button class="mb" data-rmn="-1" aria-label="Mês anterior"'+(rmo<=rMinOff()?' disabled':'')+'>'+ic('M15 6l-6 6 6 6')+'</button><b>'+monthName(ym)+'</b><button class="mb" data-rmn="1" aria-label="Próximo mês"'+(rmo>=0?' disabled':'')+'>'+ic('M9 6l6 6-6 6')+'</button></div>';
  h+='<div class="bxs"><button class="bx'+(rb==='all'?' on':'')+'" data-rbf="all">Todos</button><button class="bx'+(rb!=='all'?' on':'')+'" data-rbo="1"><span>'+(rb==='all'?'Comprador':esc(rb))+'</span>'+ic('M6 9l6 6 6-6',18)+'</button></div>';
  if(rbo)h+='<div class="card" style="padding:0 14px;margin:8px 0 0">'+(clis.length?clis.map(function(n){return '<button class="cb" data-rbf="'+esc(n)+'">'+esc(n)+(rb===n?' ✓':'')+'</button>'}).join(''):'<div style="padding:12px 0;color:var(--mut)">Nenhum comprador cadastrado.</div>')+'</div>';
- h+='<div class="tabs">'+(MODE==='h'?[['res','Resumo'],['prd','Produtos'],['cmp','Compradores'],['crg','Cargas']]:[['res','Resumo'],['cmp','Compradores'],['crg','Cargas']]).map(function(x){return '<button data-rtab="'+x[0]+'" class="'+(rtab===x[0]?'on':'')+'">'+x[1]+'</button>'}).join('')+'</div>';
+ h+='<div class="tabs">'+relTabList().map(function(x){return '<button data-rtab="'+x[0]+'" class="'+(rtab===x[0]?'on':'')+'">'+x[1]+'</button>'}).join('')+'</div>';
  if(rtab==='res'){
   h+=(MODE==='h'?'<div class="card hero"><small>Valor total</small><div class="big" style="margin-bottom:12px">'+brl(t.v)+'</div><div class="hr"></div><div><small>Vendido</small><div class="mid">'+num(t.q)+' un.</div></div></div>':'<div class="card hero"><small>Sua parte (metade)</small><div class="big" style="margin-bottom:12px">'+brl(t.v/2)+'</div><div class="hr"></div><div class="row sp"><div><small>Valor total</small><div class="mid">'+brl(t.v)+'</div></div><div style="text-align:right"><small>Vendido</small><div class="mid">'+num(t.q)+' un.</div></div></div></div>');
   h+='<div class="tiles"><div class="tile"><small>Falta receber</small><div style="color:var(--warn)">'+brl(pend.v)+'</div>'+(MODE==='h'?'':'<small>metade '+brl(pend.v/2)+'</small>')+'</div><div class="tile"><small>Recebido</small><div style="color:var(--ok)">'+brl(rec.v)+'</div>'+(MODE==='h'?'':'<small>metade '+brl(rec.v/2)+'</small>')+'</div></div>';
@@ -501,7 +575,7 @@ function render(){applyRec();var h='';
  else if(view==='list'){h+='<div class="lhead"><h1>Cargas</h1><button class="ibtn'+(sres?' on':'')+'" data-sr="1" aria-label="Buscar">'+SI+'</button></div>'+(sres?'<label class="srch" style="margin-top:0">'+SI+'<input id="sq" aria-label="Buscar" placeholder="'+(MODE==='h'?'Buscar produto, comprador ou observação':'Buscar comprador ou observação')+'" value="'+esc(qtxt)+'" autocomplete="off"></label>':'')+'<div id="lres">'+listRes()+'</div>'}
  else if(view==='rep'){h+=repHTML()}
  else if(view==='gas'){h+=gastosHTML()}
- else{h+=updCard()+(MODE==='h'?prodCard():'')+cliCard()+qsCard()+gcatCard()+logoCard()+pixCard()+'<div class="card"><b>Seus dados</b><p style="color:var(--mut);margin:6px 0 0">As cargas ficam salvas neste aparelho. Faça backup de vez em quando.</p></div>'+
+ else{h+=updCard()+(MODE==='h'?prodCard():'')+cliCard()+qsCard()+gcatCard()+cxCard()+logoCard()+pixCard()+'<div class="card"><b>Seus dados</b><p style="color:var(--mut);margin:6px 0 0">As cargas ficam salvas neste aparelho. Faça backup de vez em quando.</p></div>'+
   '<div class="card"><b>Backup</b><div style="color:var(--mut);font-size:13px;margin:4px 0 10px">Guarda cargas, gastos, compradores e atalhos. Salve de vez em quando em um lugar seguro.'+(lbGet()?' Último backup: '+fdate(lbGet())+'.':'')+'</div><button class="btn ghost" id="exp">Baixar backup</button><div style="height:8px"></div><button class="btn ghost" id="cp">Copiar backup</button><div style="height:8px"></div><button class="btn ghost" id="rst">Restaurar backup</button></div>'}
  $('#app').innerHTML=h;document.querySelectorAll('nav button').forEach(function(b){b.classList.toggle('on',b.dataset.v===view)});$('#fab').style.display=(view==='cfg'||view==='rep')?'none':''}
 function openForm(id){editId=id||null;added=[];var c=cargas.filter(function(x){return x.id===id})[0]||{};
@@ -538,6 +612,16 @@ document.addEventListener('click',function(e){var t=e.target,bt=t.closest&&t.clo
  if(d.bks){try{localStorage.setItem(LK+'-lbs',nextDay(today(),1))}catch(e){}render();return}
  if(d.pxs){pix={key:$('#pxk').value.trim(),name:$('#pxn').value.trim(),city:$('#pxc').value.trim(),val:!!$('#pxv').checked};savePix();$('#pxm').textContent='Salvo.';return}
  if(d.gc!==undefined){gcat=(gcat===d.gc)?'':d.gc;$('#gcs').innerHTML=gcatHTML();return}
+ if(d.cxpdf){return makeCxPdf()}
+ if(d.cxn){cxm=Math.min(0,Math.max(-60,cxm+parseInt(d.cxn,10)));return render()}
+ if(d.cxadd){return openCx()}
+ if(d.cxe){return openCx(d.cxe)}
+ if(d.cxsb){return openCxS()}
+ if(d.cxall){if(d.cxall==='e')cxE=!cxE;else cxG=!cxG;return render()}
+ if(d.cxrs){var rym=shiftM(today().slice(0,7),cxm);delete cxS[rym];saveCxS();closeSheet();return render()}
+ if(d.cxdel){if(confirm('Remover esta entrada?')){cx=cx.filter(function(x){return x.id!==d.cxdel});saveCx();closeSheet();render()}return}
+ if(t.id==='cxs'){var cv=pnum($('#cxv').value);if(!(cv>0)){$('#cxv').focus();return}var cw=$('#cxw').value.trim(),cd=$('#cxd').value||today(),co=cx.filter(function(x){return x.id===cxEd})[0],cn={id:co?co.id:uid(),d:cd,w:cw,v:cv};if(co)cx[cx.indexOf(co)]=cn;else cx.push(cn);saveCx();var tdm=today().slice(0,7),cdm=cd.slice(0,7);cxm=Math.max(-60,(parseInt(cdm.slice(0,4),10)-parseInt(tdm.slice(0,4),10))*12+parseInt(cdm.slice(5,7),10)-parseInt(tdm.slice(5,7),10));closeSheet();return render()}
+ if(t.id==='cxss'){var sv=pnum($('#cxsv').value);if(!isFinite(sv)){$('#cxsv').focus();return}cxS[shiftM(today().slice(0,7),cxm)]=Math.round(sv*100)/100;saveCxS();closeSheet();return render()}
  if(d.gnc){var gn=addGcat($('#gnc').value);if(gn){gcat=gn;$('#gcs').innerHTML=gcatHTML();$('#gnc').value=''}return}
  if(d.gdd){var gx=new Date($('#gd').value+'T12:00:00');if(isNaN(gx))gx=new Date(today()+'T12:00:00');gx.setDate(gx.getDate()+parseInt(d.gdd,10));$('#gd').value=gx.toISOString().slice(0,10);return}
  if(t.id==='gs'){var gv=pnum($('#gv').value);if(!(gv>0)){$('#gv').focus();return}if(!gcat){alert('Escolha uma categoria.');return}
@@ -561,7 +645,7 @@ document.addEventListener('click',function(e){var t=e.target,bt=t.closest&&t.clo
    if(nv&&nv!==appV()){um.textContent='Nova versão encontrada. Atualizando…';setTimeout(function(){location.replace(location.pathname+'?v='+Date.now())},700)}else{um.textContent='Você já está na versão mais recente.'}}).catch(function(){um.textContent='Sem conexão. Tente de novo.'});return}
  if(d.pvx){closePv();return}
  if(d.pvp!==undefined){pdfNp=d.pvp==='0';makePdf(true);return}
- if(d.pvs){var ov=$('#pvobs').value;if(ov!==pdfObs){pdfObs=ov;makePdf(true)}sendPdf();return}
+ if(d.pvs){var ov=$('#pvobs').value;if(ov!==pdfObs){pdfObs=ov;(pdfCx?makeCxPdf(true):makePdf(true))}sendPdf();return}
  if(d.pdf){makePdf();return}
  if(d.rpo){rpo=!rpo;return render()}
  if(d.rp){rpo=false;setRp(d.rp);return render()}
@@ -584,7 +668,7 @@ document.addEventListener('click',function(e){var t=e.target,bt=t.closest&&t.clo
  if(t.id==='exp'){saveBackup();lbSet();render();return}
  if(t.id==='cp'){var sj=JSON.stringify(backupObj());if(navigator.clipboard)navigator.clipboard.writeText(sj).then(function(){lbSet();alert('Backup copiado!');render()},function(){prompt('Copie:',sj)});else prompt('Copie:',sj);return}
 });
-document.addEventListener('change',function(e){var i=e.target.id;if(e.target.dataset&&e.target.dataset.bpi!==undefined){var bn=e.target.dataset.bpi,bv=String(e.target.value||'').trim();if(bv)bp[bn]=bv;else delete bp[bn];saveBp();return}if(i==='pvobs'){pdfObs=e.target.value;makePdf(true)}else if(i==='rfi'){rf=e.target.value;render()}else if(i==='rti'){rt=e.target.value;render()}else if(i==='fbsel'){fb=e.target.value;render()}else if(i==='lgf'){var f2=e.target.files&&e.target.files[0];if(f2)lgFile(f2)}else if(i==='rfile'){var f=e.target.files&&e.target.files[0];if(f){var fr=new FileReader();fr.onload=function(){var r2=restoreData(String(fr.result));$('#rmsg').textContent=r2.msg;if(r2.ok)render()};fr.onerror=function(){$('#rmsg').textContent='Não consegui ler o arquivo.'};fr.readAsText(f)}}});
+document.addEventListener('change',function(e){var i=e.target.id;if(e.target.dataset&&e.target.dataset.bpi!==undefined){var bn=e.target.dataset.bpi,bv=String(e.target.value||'').trim();if(bv)bp[bn]=bv;else delete bp[bn];saveBp();return}if(i==='cxon'){cxOn=!!e.target.checked;saveCxOn();if(!cxOn&&rtab==='cx')rtab='res';render();return}if(i==='pvobs'){pdfObs=e.target.value;(pdfCx?makeCxPdf(true):makePdf(true))}else if(i==='rfi'){rf=e.target.value;render()}else if(i==='rti'){rt=e.target.value;render()}else if(i==='fbsel'){fb=e.target.value;render()}else if(i==='lgf'){var f2=e.target.files&&e.target.files[0];if(f2)lgFile(f2)}else if(i==='rfile'){var f=e.target.files&&e.target.files[0];if(f){var fr=new FileReader();fr.onload=function(){var r2=restoreData(String(fr.result));$('#rmsg').textContent=r2.msg;if(r2.ok)render()};fr.onerror=function(){$('#rmsg').textContent='Não consegui ler o arquivo.'};fr.readAsText(f)}}});
 if('serviceWorker' in navigator)try{navigator.serviceWorker.register('sw.js').catch(function(){})}catch(e){}
 (function(){var w=document.getElementById('msw');w.querySelectorAll('button').forEach(function(b){b.classList.toggle('on',b.dataset.md===MODE)});w.addEventListener('click',function(e){var b=e.target.closest('button[data-md]');if(!b||b.dataset.md===MODE)return;try{localStorage.setItem('app-mode',b.dataset.md)}catch(x){}location.reload()})})();
 render();
