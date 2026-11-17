@@ -2,7 +2,7 @@
 <html lang="pt-BR"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Hidro Teixeira"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><link rel="manifest" href="manifest.json"><link rel="apple-touch-icon" href="icon-v3.png"><link rel="icon" href="icon-v3.png">
-<meta name="app-version" content="2026-11-13g"><meta name="theme-color" content="#070D0A"><title>Hidro Teixeira</title>
+<meta name="app-version" content="2026-11-13h"><meta name="theme-color" content="#070D0A"><title>Hidro Teixeira</title>
 <script>(function(){var m="c";try{m=localStorage.getItem("app-mode")==="h"?"h":"c"}catch(e){}document.documentElement.setAttribute("data-m",m);if(m==="h"){var t=document.querySelector('meta[name="theme-color"]');if(t)t.setAttribute("content","#06100F")}})()</script>
 <style>
 :root{--bg:#070D0A;--card:#0E1713;--bd:#1A2922;--tx:#EAF2ED;--mut:#8FA699;--pri:#5EE0A0;--onpri:#03180D;--hero:#0B3B28;--ok:#5EE0A0;--warn:#F0BE63;color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -148,6 +148,30 @@ function cxSai(ym){return gastos.filter(function(g){return String(g.d).slice(0,7
 function cxHasSobra(ym){return Object.keys(cxS).some(function(k){return k<=ym})}
 function cxSobra(ym){var ks=Object.keys(cxS).filter(function(k){return k<=ym}).sort();if(!ks.length)return 0;var k=ks[ks.length-1],v=+cxS[k],g=0;while(k<ym&&g++<600){v+=cxEnt(k)-cxSai(k);k=shiftM(k,1)}return Math.round(v*100)/100}
 function relTabList(){var a=MODE==='h'?[['res','Resumo'],['prd','Produtos'],['cmp','Compradores'],['crg','Cargas']]:[['res','Resumo'],['cmp','Compradores'],['crg','Cargas']];return a}
+var rcvM='p',rcvSel={},rcvAsk=[];
+function rcvList(){return repList().filter(function(c){return rcvM==='p'?!c.ok:!!c.ok})}
+function rcvBox(on){return '<span style="flex:none;width:26px;height:26px;border-radius:9px;display:flex;align-items:center;justify-content:center;border:2px solid '+(on?'var(--pri)':'var(--mut)')+';background:'+(on?'var(--pri)':'transparent')+';color:var(--onpri)">'+(on?'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg>':'')+'</span>'}
+function rcvRender(){var st=$('#shc').scrollTop,l=rcvList(),sel=l.filter(function(c){return rcvSel[c.id]}),by={};
+ l.forEach(function(c){var k=c.b||'Sem comprador';(by[k]=by[k]||[]).push(c)});
+ var names=Object.keys(by).sort(),allOn=l.length>0&&sel.length===l.length,
+ h='<div class="row sp"><h1>'+(rcvM==='p'?'Confirmar recebimento':'Cargas recebidas')+'</h1><button class="xc" data-close="1" aria-label="Fechar"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>';
+ if(!l.length){$('#shc').innerHTML=h+'<p style="color:var(--mut)">'+(rcvM==='p'?'Não há cargas a receber neste filtro.':'Não há cargas recebidas neste filtro.')+'</p>';return}
+ h+='<p style="color:var(--mut);font-size:14px;margin:4px 0 8px">'+(rcvM==='p'?'Marque as cargas que já foram pagas e confirme.':'Marque as que você quer voltar para "a receber".')+'</p>';
+ h+='<button class="cb" data-rcva="*" style="border-top:1px solid var(--bd)"><span class="row sp"><span style="display:flex;gap:12px;align-items:center">'+rcvBox(allOn)+'<b>'+(allOn?'Desmarcar todas':'Marcar todas')+'</b></span><span class="pill">'+l.length+' · '+brl(tot(l).v)+'</span></span></button>';
+ names.forEach(function(n){var g=by[n],gOn=g.every(function(c){return rcvSel[c.id]});
+  h+='<div class="row sp" style="margin:16px 0 2px"><b style="font-size:16px">'+esc(n)+'</b>'+(names.length>1?'<button class="pdfb" data-rcva="'+esc(n)+'" style="height:32px;font-size:13px">'+(gOn?'Desmarcar':'Marcar todas')+'</button>':'')+'</div>';
+  g.forEach(function(c){h+='<button class="cb" data-rcvt="'+esc(c.id)+'"><span class="row sp"><span style="display:flex;gap:12px;align-items:center;min-width:0">'+rcvBox(!!rcvSel[c.id])+'<span style="min-width:0"><b style="display:block">'+(c.pr?esc(c.pr)+' · ':'')+fdate(c.d)+'</b><small style="color:var(--mut)">'+num(c.q)+' un. × '+brl(c.p)+'</small></span></span><b>'+brl(c.q*c.p)+'</b></span></button>'})});
+ h+='<div style="position:sticky;bottom:0;margin:16px -20px calc(-18px - env(safe-area-inset-bottom,0px));padding:14px 20px calc(18px + env(safe-area-inset-bottom,0px));background:var(--card);border-top:1px solid var(--bd)"><div class="row sp" style="margin-bottom:10px"><span style="color:var(--mut)">'+sel.length+(sel.length===1?' selecionada':' selecionadas')+'</span><b style="font-size:18px">'+brl(tot(sel).v)+'</b></div><button class="btn" data-rcvgo="1"'+(sel.length?'':' disabled style="opacity:.45"')+'>'+(rcvM==='p'?'Confirmar recebimento':'Voltar para a receber')+'</button></div>';
+ $('#shc').innerHTML=h;$('#shc').scrollTop=st}
+function rcvOpen(m){rcvM=m;rcvSel={};rcvRender();$('#sh').classList.add('open');$('#shc').scrollTop=0}
+function rcvAskHTML(){var ym=today().slice(0,7);
+ $('#shc').innerHTML='<div class="row sp"><h1>Lançar na Caixa?</h1><button class="xc" data-close="1" aria-label="Fechar"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div><p style="color:var(--mut);font-size:14px;margin:4px 0 8px">Registrar o que entrou na Caixa de '+MESES[parseInt(ym.slice(5,7),10)-1].toLowerCase()+':</p><div class="card" style="padding:0 14px">'+rcvAsk.map(function(a){return '<div class="cb"><span class="row sp"><b>'+esc(a.w)+'</b><b style="color:var(--ok)">+ '+brl(a.v)+'</b></span></div>'}).join('')+'</div><div style="height:14px"></div><button class="btn" data-rcvcx="1">Lançar na Caixa</button><div style="height:8px"></div><button class="btn ghost" data-close="1">Agora não</button>';
+ $('#sh').classList.add('open')}
+function rcvGo(){var ids=Object.keys(rcvSel).filter(function(k){return rcvSel[k]});if(!ids.length)return;
+ var on=rcvM==='p',sel=cargas.filter(function(c){return rcvSel[c.id]});
+ cargas=cargas.map(function(c){return rcvSel[c.id]?Object.assign({},c,{ok:on}):c});persistC(ids);rcvSel={};
+ if(on&&cxOn){var g={};sel.forEach(function(c){var k=c.b||'Sem comprador';g[k]=(g[k]||0)+c.q*c.p});rcvAsk=Object.keys(g).sort().map(function(k){return{w:k,v:Math.round(g[k]*100)/100}}).filter(function(a){return a.v>0});if(rcvAsk.length){rcvAskHTML();render();return}}
+ closeSheet();render()}
 function cxHomeCard(off){if(!cxOn)return '';off=off||0;var ym=shiftM(today().slice(0,7),off),sd=Math.round((cxSobra(ym)+cxEnt(ym)-cxSai(ym))*100)/100;return '<button class="card row sp" data-gocx="'+off+'" style="width:100%;text-align:left;color:inherit;font:inherit;margin:12px 0"><span><small class="pill">Caixa de '+MESES[parseInt(ym.slice(5,7),10)-1].toLowerCase()+'</small><span style="display:block;font-size:20px;font-weight:700;margin-top:2px">'+brl(sd)+'</span></span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button>'}
 function cxCard(){return '<div class="card"><label class="row sp" style="font-size:15px;color:var(--tx)"><span><b>Caixa do mês</b><span style="display:block;color:var(--mut);font-size:13px;margin-top:4px">Mostra no Relatório, abaixo dos valores, um cartão com o saldo do mês. Ao tocar, abre a Caixa com entradas, saídas e sobra de cada mês.</span></span><input type="checkbox" id="cxon" style="width:auto;margin:0 0 0 12px"'+(cxOn?' checked':'')+'></label></div>'}
 function cxHTML(){
@@ -545,7 +569,8 @@ if(rpo)h+='<div class="card" style="padding:0 14px;margin:0 0 8px">'+[['m','Mês
  h+='<div class="tabs">'+relTabList().map(function(x){return '<button data-rtab="'+x[0]+'" class="'+(rtab===x[0]?'on':'')+'">'+x[1]+'</button>'}).join('')+'</div>';
  if(rtab==='res'){
   h+=(MODE==='h'?'<div class="card hero"><small>Valor total</small><div class="big" style="margin-bottom:12px">'+brl(t.v)+'</div><div class="hr"></div><div><small>Vendido</small><div class="mid">'+num(t.q)+' un.</div></div></div>':'<div class="card hero"><small>Sua parte (metade)</small><div class="big" style="margin-bottom:12px">'+brl(t.v/2)+'</div><div class="hr"></div><div class="row sp"><div><small>Valor total</small><div class="mid">'+brl(t.v)+'</div></div><div style="text-align:right"><small>Vendido</small><div class="mid">'+num(t.q)+' un.</div></div></div></div>');
-  h+='<div class="tiles"><div class="tile"><small>Falta receber</small><div style="color:var(--warn)">'+brl(pend.v)+'</div>'+(MODE==='h'?'':'<small>metade '+brl(pend.v/2)+'</small>')+'</div><div class="tile"><small>Recebido</small><div style="color:var(--ok)">'+brl(rec.v)+'</div>'+(MODE==='h'?'':'<small>metade '+brl(rec.v/2)+'</small>')+'</div></div>';
+  var np_=l.filter(function(c){return !c.ok}).length,nr_=l.length-np_,tb='width:100%;text-align:left;color:inherit;font:inherit;cursor:pointer';
+  h+='<div class="tiles"><button class="tile" data-rcv="p" style="'+tb+'"><small>Falta receber</small><div style="color:var(--warn)">'+brl(pend.v)+'</div>'+(MODE==='h'?'':'<small>metade '+brl(pend.v/2)+'</small>')+'<small style="margin-top:6px;font-weight:600;color:'+(np_?'var(--pri)':'var(--mut)')+'">'+(np_?'Confirmar ›':'Nada a confirmar')+'</small></button><button class="tile" data-rcv="o" style="'+tb+'"><small>Recebido</small><div style="color:var(--ok)">'+brl(rec.v)+'</div>'+(MODE==='h'?'':'<small>metade '+brl(rec.v/2)+'</small>')+'<small style="margin-top:6px;font-weight:600;color:'+(nr_?'var(--pri)':'var(--mut)')+'">'+(nr_?'Ver ou desfazer ›':'Nenhuma ainda')+'</small></button></div>';
   if(rb==='all'&&gastos.length){var gtr=gastos.filter(function(g){return g.d>=rf&&g.d<=rt}).reduce(function(a,g){return a+g.v},0),lur=t.v-gtr;h+='<div class="card"><div class="row sp"><div><small class="pill">Gastos no período</small><div><b>'+brl(gtr)+'</b></div></div><div style="text-align:right"><small class="pill">Lucro</small><div><b>'+brl(lur)+'</b>'+(MODE==='h'?'':' <span class="pill">· metade '+brl(lur/2)+'</span>')+'</div></div></div></div>'}
   if(rb==='all')h+=cxHomeCard(rsel==='m'?rmo:0);
   h+=chartHTML()}
@@ -614,6 +639,11 @@ document.addEventListener('click',function(e){var t=e.target,bt=t.closest&&t.clo
  if(d.bks){try{localStorage.setItem(LK+'-lbs',nextDay(today(),1))}catch(e){}render();return}
  if(d.pxs){pix={key:$('#pxk').value.trim(),name:$('#pxn').value.trim(),city:$('#pxc').value.trim(),val:!!$('#pxv').checked};savePix();$('#pxm').textContent='Salvo.';return}
  if(d.gc!==undefined){gcat=(gcat===d.gc)?'':d.gc;$('#gcs').innerHTML=gcatHTML();return}
+ if(d.rcv){return rcvOpen(d.rcv)}
+ if(d.rcvt){rcvSel[d.rcvt]=!rcvSel[d.rcvt];return rcvRender()}
+ if(d.rcva){var rl=rcvList(),tg=d.rcva==='*'?rl:rl.filter(function(c){return (c.b||'Sem comprador')===d.rcva}),on2=tg.length>0&&!tg.every(function(c){return rcvSel[c.id]});tg.forEach(function(c){rcvSel[c.id]=on2});return rcvRender()}
+ if(d.rcvgo){return rcvGo()}
+ if(d.rcvcx){var rym=today().slice(0,7);rcvAsk.forEach(function(a){if(a.v>0)cx.push({id:uid(),d:rym+'-01',w:a.w==='Sem comprador'?'':a.w,v:a.v})});saveCx();rcvAsk=[];closeSheet();return render()}
  if(d.gocx){view='cx';cxm=Math.min(0,parseInt(d.gocx,10)||0);return render()}
  if(d.cxback){view='rep';rtab='res';return render()}
  if(d.cxpdf){return makeCxPdf()}
